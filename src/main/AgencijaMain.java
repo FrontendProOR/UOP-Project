@@ -5,15 +5,14 @@ import mainStructure.*;
 public class AgencijaMain {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		mainStructure.Turist posetilacTurist = new Turist("Pera","Peric","333","","","");
-		System.out.println(posetilacTurist.getName());
+		// Hash table for user data --> csv file and from csv file takes salt and hashed password that is passed during registration
+		// Make Gui for Sign in and Sign up 
+		// Window for Client,Admin Page for Administrator and Agent
 		
-		mainStructure.Agent agent007 = new Agent("James","Bond","333","","","");
-		System.out.println(agent007.getName());
-		
-		mainStructure.Administrator admin = new Administrator("Djordje","Pekic","333","","","");
-		System.out.println(admin.getName()+" "+admin.getSurname());
+		mainStructure.Turist turist1 = new Turist("Pera","Peric","333","","perica32","password12345");
+		mainStructure.Agent agent1 = new Agent("James","Bond","333","","","");
+		mainStructure.Administrator admin1 = new Administrator("Djordje","Pekic","333","","","");
+		System.out.println("Name is: "+turist1.getName() +"\nSurname is: "+ turist1.getSurname() +"\nUsername is: "+ turist1.getUsername());
 	}
 
 }
