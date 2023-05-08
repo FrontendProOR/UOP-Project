@@ -53,9 +53,9 @@ public class Pbkdf2 {
 
 	public static void main(String[] args) throws Exception {
 
-		byte[] hash = getEncryptedPassword("password", "salt".getBytes());
+		//byte[] hash = getEncryptedPassword("password", "salt".getBytes());//this value should be paired with #id:long that is generated on new user registration and should be in in format of json or 12312321:hash.value,...
 //		System.out.println(Arrays.toString(hash));
-		System.out.println(authenticate("password", hash, "salt".getBytes()));//Here is the line that will check if textbox entered password is valid with the one in csv file userdata.csv
+//		System.out.println(authenticate("password", hash, "salt".getBytes()));//Here is the line that will check if textbox entered password is valid with the one in csv file userdata.csv
 		//Rest of the work here is making hash table with user data and two extra columns for "salt".getBytes() and hash which will be later used for 
 		//authentication in two lines above in if else statement and that is it
 
