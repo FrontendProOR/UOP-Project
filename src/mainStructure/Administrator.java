@@ -22,4 +22,12 @@ public class Administrator extends User {
      */
     protected Role role = Role.Administrator;
 
+	public Role getRole() {
+		return role;
+	}
+
+//	public void setRole(Role role) {
+//		this.role = role;
+//	}
+
 }

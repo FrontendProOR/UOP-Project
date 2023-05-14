@@ -16,13 +16,17 @@ public class AgencijaTouristWindow extends JFrame {
 
 	/**
 	 * Launch the application.
-	 */
+	 */		
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AgencijaTouristWindow frame = new AgencijaTouristWindow();
-					frame.setVisible(true);
+					AgencijaLoginWindow loginWindow = new AgencijaLoginWindow();
+	                loginWindow.setVisible(true);
+	                loginWindow.setTitle("Tourist Agency - Login");
+	                loginWindow.setLocationRelativeTo(null);
+//					AgencijaTouristWindow frame = new AgencijaTouristWindow();
+//					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

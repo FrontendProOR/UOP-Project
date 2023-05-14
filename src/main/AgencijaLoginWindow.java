@@ -100,31 +100,30 @@ public class AgencijaLoginWindow extends JFrame {
         			        String line;
         			        while ((line = reader.readLine()) != null) {
         			            String[] values = line.split("\\|");
-        			            String checkUsername = values[5];
+        			            String checkUsername = values[6];
         			            if(checkUsername.equals(typedUsernameString)) {
         			            	//string > hex > byte 
-        			            	byte[] hash = hexToBytes(values[6]);
-        			            	byte[] salt = hexToBytes(values[7]);
+        			            	byte[] hash = hexToBytes(values[7]);
+        			            	byte[] salt = hexToBytes(values[8]);
         			            	if(auth.Pbkdf2.authenticate(typedPasswordString, hash,salt)) {
         			            		//Here open next window based on user role
-//        			            		String role = values[1];
-//        			            		if(role == "Turist") {
-//        			            			AgencijaTouristWindow touristWindow = new AgencijaTouristWindow();
-//        			            			touristWindow.setVisible(true);
-//        			            			dispose();
-//
-//        			            		}else if (role == "Administrator") {
-//        			            			AgencijaAdministratorWindow adminWindow = new AgencijaAdministratorWindow();
-//        			            			adminWindow.setVisible(true);
-//        			            			dispose();
-//										}else if(role == "Agent"){
-//											AgencijaAgentWindow agentWindow = new AgencijaAgentWindow();
-//        			            			agentWindow.setVisible(true);
-//        			            			dispose();
-//										}else {
-//											System.out.println("Error in DB.");
-//											dispose();
-//										}
+        			            		String role = values[1];
+        			            		if(role.equals("Turist")) {
+        			            			AgencijaTouristWindow touristWindow = new AgencijaTouristWindow();
+        			            			touristWindow.setVisible(true);
+        			            			dispose();
+        			            		}else if (role.equals("Administrator")) {
+        			            			AgencijaAdministratorWindow adminWindow = new AgencijaAdministratorWindow();
+        			            			adminWindow.setVisible(true);
+        			            			dispose();
+										}else if(role.equals("Agent")){
+											AgencijaAgentWindow agentWindow = new AgencijaAgentWindow();
+        			            			agentWindow.setVisible(true);
+        			            			dispose();
+										}else {
+											System.out.println("Error in DB.");
+											dispose();
+										}
         			            		System.out.println("Proslo");
         			            		
         			            		

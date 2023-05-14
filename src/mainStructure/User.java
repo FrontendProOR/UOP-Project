@@ -23,28 +23,9 @@ public abstract class User {
 		this.address = address;
 		this.username = username;
 		this.password = password;
-		// So instead of saving password in csv save hash
-		this.hash = this.makeHash(this.password);
-
+		
 	}
 
-	protected byte[] makeHash(String password) {
-		byte[] hash = null;
-		try {
-			hash = Pbkdf2.getEncryptedPassword(password, "salt".getBytes());
-		} catch (NoSuchAlgorithmException e) {
-			hash = JMBG.getBytes();
-			e.printStackTrace();
-		} catch (InvalidKeySpecException e) {
-			hash = JMBG.getBytes();
-			e.printStackTrace();
-		}
-		return hash;
-	}
-
-	public byte[] getHash() {
-		return this.hash;
-	}
 
 	public String getName() {
 		return name;
@@ -100,43 +81,27 @@ public abstract class User {
 	public User() {
 	}
 
-	/**
-	 * 
-	 */
+	
 	protected long id;
 
-	/**
-	 * 
-	 */
+	
 	protected String name;
 
-	/**
-	 * 
-	 */
+	
 	protected String surname;
 
-	/**
-	 * 
-	 */
+	
 	protected String JMBG;
 
-	/**
-	 * 
-	 */
+	
 	protected String address;
 
-	/**
-	 * 
-	 */
+	
 	protected String username;
 
-	/**
-	 * 
-	 */
+	
 	protected String password;
-	/**
-	 * 
-	 */
+	
 	protected Gender gender;
 
 }

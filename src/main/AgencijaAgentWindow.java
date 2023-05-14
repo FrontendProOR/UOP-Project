@@ -21,8 +21,12 @@ public class AgencijaAgentWindow extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AgencijaAgentWindow frame = new AgencijaAgentWindow();
-					frame.setVisible(true);
+					AgencijaLoginWindow loginWindow = new AgencijaLoginWindow();
+	                loginWindow.setVisible(true);
+	                loginWindow.setTitle("Tourist Agency - Login");
+	                loginWindow.setLocationRelativeTo(null);
+//					AgencijaAgentWindow frame = new AgencijaAgentWindow();
+//					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
