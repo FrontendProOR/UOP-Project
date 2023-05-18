@@ -100,11 +100,11 @@ public class AgencijaLoginWindow extends JFrame {
         			        String line;
         			        while ((line = reader.readLine()) != null) {
         			            String[] values = line.split("\\|");
-        			            String checkUsername = values[6];
+        			            String checkUsername = values[7];
         			            if(checkUsername.equals(typedUsernameString)) {
         			            	//string > hex > byte 
-        			            	byte[] hash = hexToBytes(values[7]);
-        			            	byte[] salt = hexToBytes(values[8]);
+        			            	byte[] hash = hexToBytes(values[8]);
+        			            	byte[] salt = hexToBytes(values[9]);
         			            	if(auth.Pbkdf2.authenticate(typedPasswordString, hash,salt)) {
         			            		//Here open next window based on user role
         			            		String role = values[1];

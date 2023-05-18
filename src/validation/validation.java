@@ -1,6 +1,10 @@
 package validation;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.Year;
+import java.util.Arrays;
 
 public class validation {
 	// Validating name,surname
@@ -36,9 +40,31 @@ public class validation {
 
 	// Validating username
 	public static boolean isValidUsername(String username) {
-		String expressionString = "^(?!.*\\.\\.)(?!.*\\.$)[^\\W][\\w.]{0,29}$";
-		return username.matches(expressionString);
+		String expressionString = "^(?!.*\\.\\.)(?!.*\\.$)[^\\W][\\w.]{0,29}$";			
+			return username.matches(expressionString);
 	}
+//	private static boolean isNotDuplicateUsername(String usernameForCheck) {
+//	    boolean isNotDuplicate = true;
+//	    String csvFile = "src/data/userdata.csv";
+//	    try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+//	        String line;
+//	        while ((line = reader.readLine()) != null) {
+//	            String[] value = line.split("\\|");
+//	            String username = value[7].trim(); 
+//
+//	            if (usernameForCheck.equals(username)) {
+//	                isNotDuplicate = false;
+//	                break;
+//	            }
+//	        }
+//	    } catch (IOException e) {
+//	        e.printStackTrace();
+//	    }
+//
+//	    return isNotDuplicate;
+//	}
+
+	
 	// Validating password
 
 	public static boolean IsValidPassword(String password) {

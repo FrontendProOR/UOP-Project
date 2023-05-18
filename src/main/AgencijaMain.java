@@ -1,9 +1,13 @@
 package main;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 import java.util.Random;
+
+import javax.print.attribute.standard.JobOriginatingUserName;
 
 import mainStructure.Turist;
 
@@ -11,7 +15,7 @@ public class AgencijaMain {
 
 	public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException {
 //few generated users add Role in 
-		
+		//ADMIN USERNAME I SIFRA: milan123 Sifra54321
 		
 //		Turist turista1 = new Turist("Milan", "Jovic", "0404004111322", "Milos Kralja 2 Beograd","milan123", "Sifra54321");
 //		Turist turista1 = new Turist("Lazar", "Lazarevic", "1105004311422", "Milos Obrenovic 12 Novi Sad","lazar223", "Sifra12345");
@@ -25,6 +29,7 @@ public class AgencijaMain {
 //		System.out.println(id1 +"|"+ turista1.getName() + "|" + turista1.getSurname() + "|" + turista1.getJMBG() + "|"
 //				+ turista1.getAddress() + "|" + turista1.getUsername() + "|" + auth.Pbkdf2.bytesToHex(hash) + "|" + auth.Pbkdf2.bytesToHex(salt));
 		
+				
 
 	}
 }
