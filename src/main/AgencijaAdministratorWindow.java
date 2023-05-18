@@ -35,6 +35,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.ListSelectionModel;
+import java.awt.FlowLayout;
 
 public class AgencijaAdministratorWindow extends JFrame {
 
@@ -65,10 +67,13 @@ public class AgencijaAdministratorWindow extends JFrame {
 
 		//This is tab for tourists
 		JPanel panel = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panel.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		tabbedPane.addTab("Tourists", null, panel, null);
 
 		table = new JTable();
-		table.setEnabled(false);
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table.setEnabled(true);
 		table.setFont(new Font("Arial", Font.PLAIN, 12));
 		String[] columnNamesForTourist = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address", "Username" };
 		DefaultTableModel tableModelTourist = new DefaultTableModel(columnNamesForTourist, 0);
@@ -102,6 +107,18 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton = new JButton("Change Tourist");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int selectedRowPosition = table.getSelectedRow();
+				String nameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 2);
+				String surnameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 3);
+				String jmbgString = (String) tableModelTourist.getValueAt(selectedRowPosition, 4);
+				String addressString = (String) tableModelTourist.getValueAt(selectedRowPosition, 6);
+				String usernameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 7);
+				if(usernameString.length() != 0) {					
+					changeUserDataForm(nameString, surnameString, jmbgString, addressString, usernameString);
+				}else {
+					System.out.println("Please choose a user in table by clicking on a user row.");
+				}
+				
 			}
 		});
 		panel_5.add(btnNewButton, "cell 0 0,alignx center");
@@ -132,10 +149,12 @@ public class AgencijaAdministratorWindow extends JFrame {
 		// Frome here is admin tab with admins data
 
 		JPanel panel1_1 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel1_1.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
 		tabbedPane.addTab("Administrators", null, panel1_1, null);
 
 		JTable table1 = new JTable();
-		table1.setEnabled(false);
+		table1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table1.setFont(new Font("Arial", Font.PLAIN, 12));
 		String[] columnNamesForAdmins = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address", "Username" };
 		DefaultTableModel tableModelAdmin = new DefaultTableModel(columnNamesForAdmins, 0);
@@ -168,6 +187,17 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton_6 = new JButton("Change Admin");
 		btnNewButton_6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int selectedRowPosition = table1.getSelectedRow();
+				String nameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 2);
+				String surnameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 3);
+				String jmbgString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 4);
+				String addressString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 6);
+				String usernameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 7);
+				if(usernameString.length() != 0) {					
+					changeUserDataForm(nameString, surnameString, jmbgString, addressString, usernameString);
+				}else {
+					System.out.println("Please choose a user in table by clicking on a user row.");
+				}
 			}
 		});
 		panel_6.add(btnNewButton_6, "cell 0 0,alignx center");
@@ -193,10 +223,12 @@ public class AgencijaAdministratorWindow extends JFrame {
 
 		// Here is Agents tab
 		JPanel panel_2 = new JPanel();
+		FlowLayout flowLayout_2 = (FlowLayout) panel_2.getLayout();
+		flowLayout_2.setAlignment(FlowLayout.LEFT);
 		tabbedPane.addTab("Agents", null, panel_2, null);
 
 		JTable table2 = new JTable();
-		table2.setEnabled(false);
+		table2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table2.setFont(new Font("Arial", Font.PLAIN, 12));
 		String[] columnNamesForAgents = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address", "Username" };
 		DefaultTableModel tableModelAgents = new DefaultTableModel(columnNamesForAgents, 0);
@@ -229,6 +261,17 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton7 = new JButton("Change Agent");
 		btnNewButton7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int selectedRowPosition = table2.getSelectedRow();
+				String nameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 2);
+				String surnameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 3);
+				String jmbgString = (String) tableModelAgents.getValueAt(selectedRowPosition, 4);
+				String addressString = (String) tableModelAgents.getValueAt(selectedRowPosition, 6);
+				String usernameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 7);
+				if(usernameString.length() != 0) {					
+					changeUserDataForm(nameString, surnameString, jmbgString, addressString, usernameString);
+				}else {
+					System.out.println("Please choose a user in table by clicking on a user row.");
+				}
 			}
 		});
 		panel_7.add(btnNewButton7, "cell 0 0,alignx center");
@@ -353,16 +396,13 @@ public class AgencijaAdministratorWindow extends JFrame {
 	}
 
 	private static void createAdminForm() {
-		// Create the main frame
 		JFrame frame = new JFrame("Create Tourist");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(400, 300);
 		frame.getContentPane().setLayout(new BorderLayout());
 
-		// Create the form panel
 		JPanel formPanel = new JPanel(new GridLayout(8, 2));
 
-		// Create the labels and text fields
 		JLabel nameLabel = new JLabel("Name:");
 		JTextField nameTextField = new JTextField();
 		JLabel surnameLabel = new JLabel("Surname:");
@@ -379,7 +419,6 @@ public class AgencijaAdministratorWindow extends JFrame {
 		String[] roles = { "Administrator" };
 		JComboBox<String> roleComboBox = new JComboBox<>(roles);
 
-		// Add the components to the form panel
 		formPanel.add(nameLabel);
 		formPanel.add(nameTextField);
 		formPanel.add(surnameLabel);
@@ -587,7 +626,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JFrame frameForDeletionOfUser = new JFrame("Delete Tourist");
 		frameForDeletionOfUser.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frameForDeletionOfUser.setSize(400, 300);
-		frameForDeletionOfUser.setLayout(new BorderLayout());
+		frameForDeletionOfUser.getContentPane().setLayout(new BorderLayout());
 
 		// Create the form panel
 		JPanel delPanel = new JPanel(new GridLayout(2, 1));
@@ -599,8 +638,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		delPanel.add(usernameLabel);
 		delPanel.add(usernameTextField);
 
-		frameForDeletionOfUser.add(delPanel, BorderLayout.CENTER);
-		frameForDeletionOfUser.add(deleteButton, BorderLayout.SOUTH);
+		frameForDeletionOfUser.getContentPane().add(delPanel, BorderLayout.CENTER);
+		frameForDeletionOfUser.getContentPane().add(deleteButton, BorderLayout.SOUTH);
 
 		deleteButton.addActionListener(new ActionListener() {
 			@Override
@@ -626,8 +665,16 @@ public class AgencijaAdministratorWindow extends JFrame {
 
 	            if (username.equals(usernameToModify)) {
 	                // Modify the data of the current user
-	                String modifiedLine = String.join("|", newData);
-	                writer.write(modifiedLine);
+	            	String modifiedLine = String.join("|", newData);
+	            	System.out.println(newData.length == 5);
+	            	System.out.println(newData.length == 7);
+	                if(newData.length == 5) {
+	                	modifiedLine = valuesOfALine[0]+"|"+valuesOfALine[1]+"|"+newData[0]+"|"+newData[1]+"|"+newData[2]+"|"+valuesOfALine[5]+"|"+newData[3]+"|"+newData[4]+"|"+valuesOfALine[8]+"|"+valuesOfALine[9];
+	                	writer.write(modifiedLine);
+	                }else if(newData.length == 7) {
+	                	modifiedLine = valuesOfALine[0]+"|"+valuesOfALine[1]+"|"+newData[0]+"|"+newData[1]+"|"+newData[2]+"|"+valuesOfALine[5]+"|"+newData[3]+"|"+newData[4]+"|"+newData[5]+"|"+newData[6];
+	                	writer.write(modifiedLine);
+	                }
 	            } else {
 	                // Write the original line if the username doesn't match
 	                writer.write(line);
@@ -650,9 +697,9 @@ public class AgencijaAdministratorWindow extends JFrame {
 	}
 
 	//Add it to edit button on all three tabbs
-	private static void changeTouristForm() {
+	private static void changeUserDataForm(String name,String surname,String jmbg,String address,String tableUsername) {
 
-		JFrame frame = new JFrame("Change Tourist Data");
+		JFrame frame = new JFrame("Change User Data");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(400, 300);
 		frame.getContentPane().setLayout(new BorderLayout());
@@ -671,10 +718,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JTextField usernameTextField = new JTextField();
 		JLabel passwordLabel = new JLabel("Password:");
 		JPasswordField passwordField = new JPasswordField();
-		JLabel roleLabel = new JLabel("Role:");
-		String[] roles = { "Turist" };
-		JComboBox<String> roleComboBox = new JComboBox<>(roles);
-
+		
 		formPanel.add(nameLabel);
 		formPanel.add(nameTextField);
 		formPanel.add(surnameLabel);
@@ -687,19 +731,13 @@ public class AgencijaAdministratorWindow extends JFrame {
 		formPanel.add(usernameTextField);
 		formPanel.add(passwordLabel);
 		formPanel.add(passwordField);
-		formPanel.add(roleLabel);
-		formPanel.add(roleComboBox);
 		JButton submitButton = new JButton("Submit");
 		
-		//Here add function to load all previous data of a selected user user is writen in text field next to changeuser add textfield
-		
-		
-		
-		
-		
-		
-		
-		
+		nameTextField.setText(name);
+		surnameTextField.setText(surname);
+		jmbgTextField.setText(jmbg);
+		addressTextField.setText(address);
+		usernameTextField.setText(tableUsername);
 		
 		submitButton.addActionListener(new ActionListener() {
 			@Override
@@ -710,42 +748,35 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String address = addressTextField.getText();
 				String username = usernameTextField.getText();
 				String password = new String(passwordField.getPassword());
-				String role = (String) roleComboBox.getSelectedItem();
 				if (validation.IsValidNameSurname(name) && validation.IsValidNameSurname(surname)
 						&& validation.isValidJMBG(jmbg) && validation.isValidAdress(address)
-						&& validation.isValidUsername(username) && validation.IsValidPassword(password)) {
+						&& validation.isValidUsername(username)) {
 					String unetaSifra = password;
 					String filePath = "src/data/userdata.csv";
-					Long id1 = new Random().nextLong();//check if it needs same id
-					byte[] salt;
-					byte[] hash;
-					if (role == "Turist") {
-						mainStructure.Turist user = new Turist(name, surname, jmbg, address, username, password);
+					String tempFilePathString = "src/data/temp.csv";
+					
 						try {
-							salt = auth.Pbkdf2.generateSalt();
-							hash = auth.Pbkdf2.getEncryptedPassword(unetaSifra, salt);
-							String unos = id1 + "|" + user.getRole() + "|" + user.getName() + "|" + user.getSurname()
-									+ "|" + user.getJMBG() + "|" + user.getGender() + "|" + user.getAddress() + "|"
-									+ user.getUsername() + "|" + auth.Pbkdf2.bytesToHex(hash) + "|"
-									+ auth.Pbkdf2.bytesToHex(salt);
-							
-								//Here delete old line and add new line
-								//newLine is list or string with all new filled data
-									modifyUserData(filePath, unos, username, newLine);
-								
-								
-								
-								System.out.println("Value written to the CSV file successfully.");
+							if(unetaSifra.length() != 0) {
+								byte[] salt = auth.Pbkdf2.generateSalt();
+								byte[] hash = auth.Pbkdf2.getEncryptedPassword(unetaSifra, salt);
+								System.out.println(tableUsername);
+								String[] newLine = {name,surname,jmbg,address,username,auth.Pbkdf2.bytesToHex(hash) ,auth.Pbkdf2.bytesToHex(salt)};
+								modifyUserData(filePath, tempFilePathString, tableUsername, newLine );
+								System.out.println("Mod");
 								frame.setVisible(false);
-							
+							}else {
+								System.out.println(tableUsername);
+								String[] newLine = {name,surname,jmbg,address,username};
+								modifyUserData(filePath, tempFilePathString, tableUsername, newLine );
+								System.out.println("Mod");
+								frame.setVisible(false);
+							}							
 						} catch (NoSuchAlgorithmException e1) {
 							e1.printStackTrace();
 						} catch (InvalidKeySpecException e1) {
 							e1.printStackTrace();
 						}
-					} else {
-						System.out.println("Greska -1");
-					}
+					
 
 				}
 
