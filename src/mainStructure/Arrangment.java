@@ -1,5 +1,7 @@
 package mainStructure;
+
 import java.time.LocalDateTime;
+import java.util.Random;
 //import java.util.*;
 
 /**
@@ -7,40 +9,90 @@ import java.time.LocalDateTime;
  */
 public class Arrangment {
 
-    /**
-     * Default constructor
-     */
-    public Arrangment() {
-    }
+	/**
+	 * Default constructor
+	 */
+	public Arrangment() {
+	}
 
-    /**
-     * 
-     */
-    protected long id;
+	public Arrangment(String picture, LocalDateTime dateAndTime, int capacity, double price, double fairDiscount) {
+		long id = new Random().nextLong();
+		this.id = id;
+		this.picture = picture;
+		this.dateAndTime = dateAndTime;
+		this.capacity = capacity;
+		this.price = price;
+		this.fairDiscount = fairDiscount;
+	}
 
-    /**
-     * 
-     */
-    protected String picture;
+	public String getPicture() {
+		return picture;
+	}
 
-    /**
-     * 
-     */
-    protected LocalDateTime dateAndTime;
+	public void setPicture(String picture) {
+		this.picture = picture;
+	}
 
-    /**
-     * 
-     */
-    protected int capacity;
+	public LocalDateTime getDateAndTime() {
+		return dateAndTime;
+	}
 
-    /**
-     * 
-     */
-    protected double price;
+	public void setDateAndTime(LocalDateTime dateAndTime) {
+		this.dateAndTime = dateAndTime;
+	}
 
-    /**
-     * 
-     */
-    protected double fairDiscount;
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public double getFairDiscount() {
+		return fairDiscount;
+	}
+
+	public void setFairDiscount(double fairDiscount) {
+		this.fairDiscount = fairDiscount;
+	}
+
+	/**
+	 * 
+	 */
+	protected long id;
+
+	/**
+	 * 
+	 */
+	protected String picture;
+
+	/**
+	 * 
+	 */
+	protected LocalDateTime dateAndTime;
+
+	/**
+	 * 
+	 */
+	protected int capacity;
+
+	/**
+	 * 
+	 */
+	protected double price;
+
+	/**
+	 * 
+	 */
+	protected double fairDiscount;
 
 }
