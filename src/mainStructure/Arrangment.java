@@ -9,22 +9,29 @@ import java.util.Random;
  */
 public class Arrangment {
 
+
 	/**
 	 * Default constructor
 	 */
 	public Arrangment() {
 	}
 
-	public Arrangment(String picture, LocalDateTime dateAndTime, int capacity, double price, double fairDiscount) {
+	public Arrangment(String picture, LocalDateTime dateAndTime,String title,String description, int capacity, double price, double fairDiscount) {
 		long id = new Random().nextLong();
 		this.id = id;
 		this.picture = picture;
+		this.title = title;
+		this.description = description;
 		this.dateAndTime = dateAndTime;
 		this.capacity = capacity;
 		this.price = price;
 		this.fairDiscount = fairDiscount;
 	}
 
+	public String getInfo() {
+		return this.id+"|"+this.picture+"|"+this.dateAndTime+"|"+this.title+"|"+this.description+"|"+this.capacity+"|"+this.price+"|"+this.fairDiscount;
+	}
+	
 	public String getPicture() {
 		return picture;
 	}
@@ -70,6 +77,9 @@ public class Arrangment {
 	 */
 	protected long id;
 
+	protected String title;
+	
+	protected String description;
 	/**
 	 * 
 	 */

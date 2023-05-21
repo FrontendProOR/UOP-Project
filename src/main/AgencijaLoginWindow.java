@@ -49,10 +49,6 @@ public class AgencijaLoginWindow extends JFrame {
 		});
 	}
 
-	// When user is added he has hashed password from string to byte to hex and same
-	// for salt these two values are stored on 6 and 7 index positions in csv file
-	// with this function they are converted from hex to bytes without losing value
-	// so that they could be passed for authentication when user tries to sign in
 	public static byte[] hexToBytes(String hexString) {
 		int length = hexString.length();
 		byte[] bytes = new byte[length / 2];
@@ -88,20 +84,20 @@ public class AgencijaLoginWindow extends JFrame {
 
 		JButton loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                performLogin();
-            }
-        });
+			public void actionPerformed(ActionEvent e) {
+				performLogin();
+			}
+		});
 		getRootPane().setDefaultButton(loginButton);
-		
+
 		contentPane.setFocusable(true);
-        contentPane.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    performLogin();
-                }
-            }
-        });
+		contentPane.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					performLogin();
+				}
+			}
+		});
 
 		loginButton.setFont(new Font("Arial", Font.BOLD, 16));
 
@@ -131,7 +127,7 @@ public class AgencijaLoginWindow extends JFrame {
 							byte[] hash = hexToBytes(values[8]);
 							byte[] salt = hexToBytes(values[9]);
 							if (auth.Pbkdf2.authenticate(typedPasswordString, hash, salt)) {
-								// Here open next window based on user role
+
 								String role = values[1];
 								if (role.equals("Turist")) {
 									AgencijaTouristWindow touristWindow = new AgencijaTouristWindow();
@@ -150,7 +146,8 @@ public class AgencijaLoginWindow extends JFrame {
 									dispose();
 								}
 							} else {
-								JOptionPane.showMessageDialog(null, "Information message.", "Password is incorrect!", JOptionPane.INFORMATION_MESSAGE);
+								JOptionPane.showMessageDialog(null, "Information message.", "Password is incorrect!",
+										JOptionPane.INFORMATION_MESSAGE);
 							}
 						}
 					}
@@ -160,10 +157,13 @@ public class AgencijaLoginWindow extends JFrame {
 					e1.printStackTrace();
 				}
 			} else {
-				JOptionPane.showMessageDialog(null, "Information message.", "Password or Username is not in valid form please check type credentials.", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Information message.",
+						"Password or Username is not in valid form please check type credentials.",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Information message.", "Please input your username and password.", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Information message.", "Please input your username and password.",
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 

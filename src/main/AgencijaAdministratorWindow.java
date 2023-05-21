@@ -3,6 +3,7 @@ package main;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -32,12 +33,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import validation.validation;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import java.awt.FlowLayout;
+import javax.swing.Icon;
 
 public class AgencijaAdministratorWindow extends JFrame {
 
@@ -66,7 +73,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-		//This is tab for tourists
+		// This is tab for tourists
 		JPanel panel = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
@@ -114,12 +121,12 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String jmbgString = (String) tableModelTourist.getValueAt(selectedRowPosition, 4);
 				String addressString = (String) tableModelTourist.getValueAt(selectedRowPosition, 6);
 				String usernameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 7);
-				if(usernameString.length() != 0) {					
+				if (usernameString.length() != 0) {
 					changeUserDataForm(nameString, surnameString, jmbgString, addressString, usernameString);
-				}else {
+				} else {
 					System.out.println("Please choose a user in table by clicking on a user row.");
 				}
-				
+
 			}
 		});
 		panel_5.add(btnNewButton, "cell 0 0,alignx center");
@@ -147,7 +154,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(table);
 		panel.add(scrollPane, "cell 0 0, grow");
 
-		// Frome here is admin tab with admins data
+		// Here is admin tab
 
 		JPanel panel1_1 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel1_1.getLayout();
@@ -194,9 +201,9 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String jmbgString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 4);
 				String addressString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 6);
 				String usernameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 7);
-				if(usernameString.length() != 0) {					
+				if (usernameString.length() != 0) {
 					changeUserDataForm(nameString, surnameString, jmbgString, addressString, usernameString);
-				}else {
+				} else {
 					System.out.println("Please choose a user in table by clicking on a user row.");
 				}
 			}
@@ -268,9 +275,9 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String jmbgString = (String) tableModelAgents.getValueAt(selectedRowPosition, 4);
 				String addressString = (String) tableModelAgents.getValueAt(selectedRowPosition, 6);
 				String usernameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 7);
-				if(usernameString.length() != 0) {					
+				if (usernameString.length() != 0) {
 					changeUserDataForm(nameString, surnameString, jmbgString, addressString, usernameString);
-				}else {
+				} else {
 					System.out.println("Please choose a user in table by clicking on a user row.");
 				}
 			}
@@ -296,11 +303,93 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JScrollPane scrollPane2 = new JScrollPane(table2);
 		panel_2.add(scrollPane2, "cell 0 0, grow");
 
+///////////////////////////////////////////////////////////////////////////////////////////
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Arrangments", null, panel_3, null);
+		panel_3.setLayout(new MigLayout("fill"));
+
+		ImageIcon imageIcon = createResizedImageIcon("src/image/arrangment1.jpg", 400, 300);
+		JLabel lblImage = new JLabel(imageIcon);
+
+		JPanel labelsPanel = new JPanel(new MigLayout("fill, gapy 30"));
+		JLabel lblTitle = new JLabel("Title");
+		JLabel lblDescription = new JLabel("Description");
+		JLabel lblPrice = new JLabel("Price");
+		JLabel lblCapacity = new JLabel("Capacity");
+		JLabel lblFairDiscount = new JLabel("Discount");
+		labelsPanel.add(lblTitle, "wrap");
+		labelsPanel.add(lblDescription, "wrap");
+		labelsPanel.add(lblPrice, "wrap");
+		labelsPanel.add(lblCapacity, "wrap");
+		labelsPanel.add(lblFairDiscount, "wrap");
+
+		JPanel imageLabelsPanel = new JPanel(new MigLayout("fill"));
+		imageLabelsPanel.add(lblImage, "cell 0 0");
+		imageLabelsPanel.add(labelsPanel, "cell 0 1,alignx center");
+
+		panel_3.add(imageLabelsPanel, "cell 0 0, grow");
+
+		JPanel buttonsPanel22 = new JPanel(new MigLayout("fill"));
+		JButton btn1 = new JButton("Add Arrangment");
+		JButton btn2 = new JButton("Edit Arrangment");
+		JButton btn3 = new JButton("Delete Arrangment");
+		JButton btn4 = new JButton("Approve Agent Arrangment");
+		buttonsPanel22.add(btn1, "alignx right,wrap");
+		buttonsPanel22.add(btn2, "alignx right,wrap");
+		buttonsPanel22.add(btn3, "alignx right,wrap");
+		buttonsPanel22.add(btn4, "alignx right,wrap");
+		panel_3.add(buttonsPanel22, "cell 1 0 1 2, grow");
+
+		String[] tableModel4 = { "ID", "Title", "Capacity", "Fair Discout", "Price", "Address" };
+		DefaultTableModel tableModelArrangments = new DefaultTableModel(tableModel4, 0);
+		JTable table5 = new JTable();
+		String[][] allArrangments = new String[0][5];
+		String csvFile3 = "src/data/arrangments.csv";
+		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile3))) {
+			String line;
+			int i = 0;
+			while ((line = reader.readLine()) != null) {
+				String[] valueOfAArrangment = line.split("\\|");
+				String[] arrangmentsStrings = { valueOfAArrangment[0], valueOfAArrangment[3], valueOfAArrangment[5],
+						valueOfAArrangment[7], valueOfAArrangment[6], valueOfAArrangment[1] };
+				allArrangments = Arrays.copyOf(allArrangments, allArrangments.length + 1);
+				allArrangments[i] = arrangmentsStrings;
+				tableModelArrangments.addRow(arrangmentsStrings);
+				i++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		table5.setModel(tableModelArrangments);
+		table5.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting() && table5.getSelectedRow() != -1) {
+					int selectedRow = table5.getSelectedRow();
+					if (selectedRow != -1) {
+						String imagePath = (String) table5.getValueAt(selectedRow, 5);
+						if (imagePath != null && !imagePath.isEmpty()) {
+							ImageIcon selectedImageIcon = createResizedImageIcon(imagePath, 400, 300);
+							lblImage.setIcon(selectedImageIcon);
+						}
+					}
+				}
+			}
+		});
+		JScrollPane arrangmentScrollPane = new JScrollPane(table5);
+		panel_3.add(arrangmentScrollPane, "cell 2 0 1 2, grow");
+
+//////////////////////////////////////////////////////////////////////////////////////////
 
 		JPanel panel_4 = new JPanel();
 		tabbedPane.addTab("Reservations", null, panel_4, null);
+	}
+
+	private ImageIcon createResizedImageIcon(String path, int width, int height) {
+		ImageIcon imageIcon = new ImageIcon(path);
+		Image image = imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT);
+		return new ImageIcon(image);
 	}
 
 	private static void createTouristForm() {
@@ -360,37 +449,38 @@ public class AgencijaAdministratorWindow extends JFrame {
 					if (role == "Turist") {
 						mainStructure.Turist user;
 						try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-    			        	String line;
-    			        	boolean notDuplicateUsernameOrJmbg = true;
+							String line;
+							boolean notDuplicateUsernameOrJmbg = true;
 							while ((line = reader.readLine()) != null) {
-							    String[] values = line.split("\\|");
-							    String checkUsername = values[7];
-							    String checkJMBG = values[4];
-							    if(username.equals(checkUsername) || jmbg.equals(checkJMBG)) {
-							    	notDuplicateUsernameOrJmbg = false;
-							    	String message = "Username or JMBG is already in use. Please try other credentials or contact support.";
-							        String title = "Information Dialog";
-							        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
-							    }
+								String[] values = line.split("\\|");
+								String checkUsername = values[7];
+								String checkJMBG = values[4];
+								if (username.equals(checkUsername) || jmbg.equals(checkJMBG)) {
+									notDuplicateUsernameOrJmbg = false;
+									String message = "Username or JMBG is already in use. Please try other credentials or contact support.";
+									String title = "Information Dialog";
+									JOptionPane.showMessageDialog(null, message, title,
+											JOptionPane.INFORMATION_MESSAGE);
+								}
 							}
-							    if(notDuplicateUsernameOrJmbg) {							    	
-							    	try {
-							    		user = new Turist(name, surname, jmbg, address, username, password);
-							    		String unos = user.userInfo();
-							    		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-							    			writer.write(unos);
-							    			writer.newLine();
-							    			System.out.println("Value written to the CSV file successfully.");
-							    			reader.close();
-							    			writer.close();
-							    			frame.setVisible(false);
-							    		} catch (IOException e2) {
-							    			e2.printStackTrace();
-							    		}
-							    	} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
-							    		e1.printStackTrace();
-							    	}
-							    }
+							if (notDuplicateUsernameOrJmbg) {
+								try {
+									user = new Turist(name, surname, jmbg, address, username, password);
+									String unos = user.userInfo();
+									try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+										writer.write(unos);
+										writer.newLine();
+										System.out.println("Value written to the CSV file successfully.");
+										reader.close();
+										writer.close();
+										frame.setVisible(false);
+									} catch (IOException e2) {
+										e2.printStackTrace();
+									}
+								} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
+									e1.printStackTrace();
+								}
+							}
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
@@ -463,37 +553,38 @@ public class AgencijaAdministratorWindow extends JFrame {
 					if (role == "Administrator") {
 						mainStructure.Administrator user;
 						try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-    			        	String line;
-    			        	boolean notDuplicateUsernameOrJmbg = true;
+							String line;
+							boolean notDuplicateUsernameOrJmbg = true;
 							while ((line = reader.readLine()) != null) {
-							    String[] values = line.split("\\|");
-							    String checkUsername = values[7];
-							    String checkJMBG = values[4];
-							    if(username.equals(checkUsername) || jmbg.equals(checkJMBG)) {
-							    	notDuplicateUsernameOrJmbg = false;
-							    	String message = "Username or JMBG is already in use. Please try other credentials or contact support.";
-							        String title = "Information Dialog";
-							        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
-							    }
+								String[] values = line.split("\\|");
+								String checkUsername = values[7];
+								String checkJMBG = values[4];
+								if (username.equals(checkUsername) || jmbg.equals(checkJMBG)) {
+									notDuplicateUsernameOrJmbg = false;
+									String message = "Username or JMBG is already in use. Please try other credentials or contact support.";
+									String title = "Information Dialog";
+									JOptionPane.showMessageDialog(null, message, title,
+											JOptionPane.INFORMATION_MESSAGE);
+								}
 							}
-							    if(notDuplicateUsernameOrJmbg) {							    	
-							    	try {
-							    		user = new Administrator(name, surname, jmbg, address, username, password);
-							    		String unos = user.userInfo();
-							    		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-							    			writer.write(unos);
-							    			writer.newLine();
-							    			System.out.println("Value written to the CSV file successfully.");
-							    			reader.close();
-							    			writer.close();
-							    			frame.setVisible(false);
-							    		} catch (IOException e2) {
-							    			e2.printStackTrace();
-							    		}
-							    	} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
-							    		e1.printStackTrace();
-							    	}
-							    }
+							if (notDuplicateUsernameOrJmbg) {
+								try {
+									user = new Administrator(name, surname, jmbg, address, username, password);
+									String unos = user.userInfo();
+									try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+										writer.write(unos);
+										writer.newLine();
+										System.out.println("Value written to the CSV file successfully.");
+										reader.close();
+										writer.close();
+										frame.setVisible(false);
+									} catch (IOException e2) {
+										e2.printStackTrace();
+									}
+								} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
+									e1.printStackTrace();
+								}
+							}
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
@@ -565,39 +656,40 @@ public class AgencijaAdministratorWindow extends JFrame {
 					String filePath = "src/data/userdata.csv";
 					if (role == "Agent") {
 						mainStructure.Agent user;
-	
-    			        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-    			        	String line;
-    			        	boolean notDuplicateUsernameOrJmbg = true;
+
+						try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+							String line;
+							boolean notDuplicateUsernameOrJmbg = true;
 							while ((line = reader.readLine()) != null) {
-							    String[] values = line.split("\\|");
-							    String checkUsername = values[7];
-							    String checkJMBG = values[4];
-							    if(username.equals(checkUsername) || jmbg.equals(checkJMBG)) {
-							    	notDuplicateUsernameOrJmbg = false;
-							    	String message = "Username or JMBG is already in use. Please try other credentials or contact support.";
-							        String title = "Information Dialog";
-							        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
-							    }
+								String[] values = line.split("\\|");
+								String checkUsername = values[7];
+								String checkJMBG = values[4];
+								if (username.equals(checkUsername) || jmbg.equals(checkJMBG)) {
+									notDuplicateUsernameOrJmbg = false;
+									String message = "Username or JMBG is already in use. Please try other credentials or contact support.";
+									String title = "Information Dialog";
+									JOptionPane.showMessageDialog(null, message, title,
+											JOptionPane.INFORMATION_MESSAGE);
+								}
 							}
-							    if(notDuplicateUsernameOrJmbg) {							    	
-							    	try {
-							    		user = new Agent(name, surname, jmbg, address, username, password);
-							    		String unos = user.userInfo();
-							    		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-							    			writer.write(unos);
-							    			writer.newLine();
-							    			System.out.println("Value written to the CSV file successfully.");
-							    			reader.close();
-							    			writer.close();
-							    			frame.setVisible(false);
-							    		} catch (IOException e2) {
-							    			e2.printStackTrace();
-							    		}
-							    	} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
-							    		e1.printStackTrace();
-							    	}
-							    }
+							if (notDuplicateUsernameOrJmbg) {
+								try {
+									user = new Agent(name, surname, jmbg, address, username, password);
+									String unos = user.userInfo();
+									try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+										writer.write(unos);
+										writer.newLine();
+										System.out.println("Value written to the CSV file successfully.");
+										reader.close();
+										writer.close();
+										frame.setVisible(false);
+									} catch (IOException e2) {
+										e2.printStackTrace();
+									}
+								} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
+									e1.printStackTrace();
+								}
+							}
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
@@ -682,49 +774,52 @@ public class AgencijaAdministratorWindow extends JFrame {
 	}
 
 	public static void modifyUserData(String csvFile, String tempFile, String usernameToModify, String[] newData) {
-	    try {
-	        BufferedReader reader = new BufferedReader(new FileReader(csvFile));
-	        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(csvFile));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 
-	        String line;
-	        while ((line = reader.readLine()) != null) {
-	            String[] valuesOfALine = line.split("\\|");
-	            String username = valuesOfALine[7];
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] valuesOfALine = line.split("\\|");
+				String username = valuesOfALine[7];
 
-	            if (username.equals(usernameToModify)) {
-	                // Modify the data of the current user
-	            	String modifiedLine = String.join("|", newData);
-	            	
-	                if(newData.length == 5) {
-	                	modifiedLine = valuesOfALine[0]+"|"+valuesOfALine[1]+"|"+newData[0]+"|"+newData[1]+"|"+newData[2]+"|"+valuesOfALine[5]+"|"+newData[3]+"|"+newData[4]+"|"+valuesOfALine[8]+"|"+valuesOfALine[9];
-	                	writer.write(modifiedLine);
-	                }else if(newData.length == 7) {
-	                	modifiedLine = valuesOfALine[0]+"|"+valuesOfALine[1]+"|"+newData[0]+"|"+newData[1]+"|"+newData[2]+"|"+valuesOfALine[5]+"|"+newData[3]+"|"+newData[4]+"|"+newData[5]+"|"+newData[6];
-	                	writer.write(modifiedLine);
-	                }
-	            } else {
-	                // Write the original line if the username doesn't match
-	                writer.write(line);
-	            }
-	            writer.newLine();
-	        }
+				if (username.equals(usernameToModify)) {
 
-	        reader.close();
-	        writer.close();
+					String modifiedLine = String.join("|", newData);
 
-	        // Replace the original file with the modified file
-	        Path source = Paths.get(tempFile);
-	        Path destination = Paths.get(csvFile);
-	        Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+					if (newData.length == 5) {
+						modifiedLine = valuesOfALine[0] + "|" + valuesOfALine[1] + "|" + newData[0] + "|" + newData[1]
+								+ "|" + newData[2] + "|" + valuesOfALine[5] + "|" + newData[3] + "|" + newData[4] + "|"
+								+ valuesOfALine[8] + "|" + valuesOfALine[9];
+						writer.write(modifiedLine);
+					} else if (newData.length == 7) {
+						modifiedLine = valuesOfALine[0] + "|" + valuesOfALine[1] + "|" + newData[0] + "|" + newData[1]
+								+ "|" + newData[2] + "|" + valuesOfALine[5] + "|" + newData[3] + "|" + newData[4] + "|"
+								+ newData[5] + "|" + newData[6];
+						writer.write(modifiedLine);
+					}
+				} else {
 
-	        System.out.println("User data modified successfully.");
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+					writer.write(line);
+				}
+				writer.newLine();
+			}
+
+			reader.close();
+			writer.close();
+
+			Path source = Paths.get(tempFile);
+			Path destination = Paths.get(csvFile);
+			Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+
+			System.out.println("User data modified successfully.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	//Add it to edit button on all three tabbs
-	private static void changeUserDataForm(String name,String surname,String jmbg,String address,String tableUsername) {
+	private static void changeUserDataForm(String name, String surname, String jmbg, String address,
+			String tableUsername) {
 
 		JFrame frame = new JFrame("Change User Data");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -745,7 +840,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JTextField usernameTextField = new JTextField();
 		JLabel passwordLabel = new JLabel("Password:");
 		JPasswordField passwordField = new JPasswordField();
-		
+
 		formPanel.add(nameLabel);
 		formPanel.add(nameTextField);
 		formPanel.add(surnameLabel);
@@ -759,13 +854,13 @@ public class AgencijaAdministratorWindow extends JFrame {
 		formPanel.add(passwordLabel);
 		formPanel.add(passwordField);
 		JButton submitButton = new JButton("Submit");
-		
+
 		nameTextField.setText(name);
 		surnameTextField.setText(surname);
 		jmbgTextField.setText(jmbg);
 		addressTextField.setText(address);
 		usernameTextField.setText(tableUsername);
-		
+
 		submitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -781,29 +876,29 @@ public class AgencijaAdministratorWindow extends JFrame {
 					String unetaSifra = password;
 					String filePath = "src/data/userdata.csv";
 					String tempFilePathString = "src/data/temp.csv";
-					
-						try {
-							if(unetaSifra.length() != 0) {
-								byte[] salt = auth.Pbkdf2.generateSalt();
-								byte[] hash = auth.Pbkdf2.getEncryptedPassword(unetaSifra, salt);
-								System.out.println(tableUsername);
-								String[] newLine = {name,surname,jmbg,address,username,auth.Pbkdf2.bytesToHex(hash) ,auth.Pbkdf2.bytesToHex(salt)};
-								modifyUserData(filePath, tempFilePathString, tableUsername, newLine );
-								System.out.println("Modifying...");
-								frame.setVisible(false);
-							}else {
-								System.out.println(tableUsername);
-								String[] newLine = {name,surname,jmbg,address,username};
-								modifyUserData(filePath, tempFilePathString, tableUsername, newLine );
-								System.out.println("Modifying...");
-								frame.setVisible(false);
-							}							
-						} catch (NoSuchAlgorithmException e1) {
-							e1.printStackTrace();
-						} catch (InvalidKeySpecException e1) {
-							e1.printStackTrace();
+
+					try {
+						if (unetaSifra.length() != 0) {
+							byte[] salt = auth.Pbkdf2.generateSalt();
+							byte[] hash = auth.Pbkdf2.getEncryptedPassword(unetaSifra, salt);
+							System.out.println(tableUsername);
+							String[] newLine = { name, surname, jmbg, address, username, auth.Pbkdf2.bytesToHex(hash),
+									auth.Pbkdf2.bytesToHex(salt) };
+							modifyUserData(filePath, tempFilePathString, tableUsername, newLine);
+							System.out.println("Modifying...");
+							frame.setVisible(false);
+						} else {
+							System.out.println(tableUsername);
+							String[] newLine = { name, surname, jmbg, address, username };
+							modifyUserData(filePath, tempFilePathString, tableUsername, newLine);
+							System.out.println("Modifying...");
+							frame.setVisible(false);
 						}
-					
+					} catch (NoSuchAlgorithmException e1) {
+						e1.printStackTrace();
+					} catch (InvalidKeySpecException e1) {
+						e1.printStackTrace();
+					}
 
 				}
 
