@@ -9,10 +9,6 @@ import java.util.Random;
  */
 public class Arrangment {
 
-
-	/**
-	 * Default constructor
-	 */
 	public Arrangment() {
 	}
 
@@ -34,6 +30,22 @@ public class Arrangment {
 	
 	public String getPicture() {
 		return picture;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public void setPicture(String picture) {

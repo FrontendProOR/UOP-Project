@@ -46,6 +46,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.FlowLayout;
 import javax.swing.Icon;
 
+//dodati status u tabelu i zacrveniti row u tabeli
 public class AgencijaAdministratorWindow extends JFrame {
 
 	private static final long serialVersionUID = 3028218694305485178L;
@@ -80,7 +81,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		tabbedPane.addTab("Tourists", null, panel, null);
 
 		table = new JTable();
-		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setEnabled(true);
 		table.setFont(new Font("Arial", Font.PLAIN, 12));
 		String[] columnNamesForTourist = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address", "Username" };
@@ -134,7 +135,12 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton_1 = new JButton("Delete Tourist");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				UserDeletionFrame();
+				// proslediti u funckciju iznad vrednost celije username na selectedrow i treba
+				// funkciju izmeniti da samo brise csv fajl
+				int selectedRowPosition = table.getSelectedRow();
+				String usernameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 7);
+				deleteLineByUsername(usernameString);
+				tableModelTourist.removeRow(selectedRowPosition);
 
 			}
 		});
@@ -162,7 +168,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		tabbedPane.addTab("Administrators", null, panel1_1, null);
 
 		JTable table1 = new JTable();
-		table1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table1.setFont(new Font("Arial", Font.PLAIN, 12));
 		String[] columnNamesForAdmins = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address", "Username" };
 		DefaultTableModel tableModelAdmin = new DefaultTableModel(columnNamesForAdmins, 0);
@@ -213,7 +219,11 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton_4 = new JButton("Delete Admin");
 		btnNewButton_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				UserDeletionFrame();
+				// Ovde je popravljeno brisanje na selekt
+				int selectedRowPosition = table1.getSelectedRow();
+				String usernameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 7);
+				deleteLineByUsername(usernameString);
+				tableModelAdmin.removeRow(selectedRowPosition);
 			}
 		});
 		panel_6.add(btnNewButton_4, "cell 0 1,alignx center");
@@ -236,7 +246,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		tabbedPane.addTab("Agents", null, panel_2, null);
 
 		JTable table2 = new JTable();
-		table2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table2.setFont(new Font("Arial", Font.PLAIN, 12));
 		String[] columnNamesForAgents = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address", "Username" };
 		DefaultTableModel tableModelAgents = new DefaultTableModel(columnNamesForAgents, 0);
@@ -287,7 +297,10 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton_7_1 = new JButton("Delete Agent");
 		btnNewButton_7_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				UserDeletionFrame();
+				int selectedRowPosition = table2.getSelectedRow();
+				String usernameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 7);
+				deleteLineByUsername(usernameString);
+				tableModelAgents.removeRow(selectedRowPosition);
 			}
 		});
 		panel_7.add(btnNewButton_7_1, "cell 0 1,alignx center");
@@ -340,9 +353,14 @@ public class AgencijaAdministratorWindow extends JFrame {
 		buttonsPanel22.add(btn4, "alignx right,wrap");
 		panel_3.add(buttonsPanel22, "cell 1 0 1 2, grow");
 
+		// Add by who was arrangment added to DB
+		// When you login there are admins credentials that will be used later on as
+		// last property in csv file
+
 		String[] tableModel4 = { "ID", "Title", "Capacity", "Fair Discout", "Price", "Address" };
 		DefaultTableModel tableModelArrangments = new DefaultTableModel(tableModel4, 0);
 		JTable table5 = new JTable();
+		table5.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		String[][] allArrangments = new String[0][5];
 		String csvFile3 = "src/data/arrangments.csv";
 		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile3))) {
@@ -363,13 +381,23 @@ public class AgencijaAdministratorWindow extends JFrame {
 
 		table5.setModel(tableModelArrangments);
 		table5.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting() && table5.getSelectedRow() != -1) {
 					int selectedRow = table5.getSelectedRow();
+
 					if (selectedRow != -1) {
 						String imagePath = (String) table5.getValueAt(selectedRow, 5);
 						if (imagePath != null && !imagePath.isEmpty()) {
+							String title = (String) tableModelArrangments.getValueAt(selectedRow, 1);
+							String capacity = (String) tableModelArrangments.getValueAt(selectedRow, 2);
+							String fairDiscount = (String) tableModelArrangments.getValueAt(selectedRow, 3);
+							String price = (String) tableModelArrangments.getValueAt(selectedRow, 4);
+							lblTitle.setText("Title: " + title);
+							lblCapacity.setText("Capacity: " + capacity);
+							lblFairDiscount.setText("Fair Discout: " + fairDiscount);
+							lblPrice.setText("Price: " + price);
 							ImageIcon selectedImageIcon = createResizedImageIcon(imagePath, 400, 300);
 							lblImage.setIcon(selectedImageIcon);
 						}
@@ -740,37 +768,6 @@ public class AgencijaAdministratorWindow extends JFrame {
 		} catch (IOException e) {
 			System.out.println("Error renaming the file: " + e.getMessage());
 		}
-	}
-
-	public void UserDeletionFrame() {
-		JFrame frameForDeletionOfUser = new JFrame("Delete Tourist");
-		frameForDeletionOfUser.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frameForDeletionOfUser.setSize(400, 300);
-		frameForDeletionOfUser.getContentPane().setLayout(new BorderLayout());
-
-		// Create the form panel
-		JPanel delPanel = new JPanel(new GridLayout(2, 1));
-
-		JLabel usernameLabel = new JLabel("Username:");
-		JTextField usernameTextField = new JTextField(20);
-		JButton deleteButton = new JButton("Delete");
-
-		delPanel.add(usernameLabel);
-		delPanel.add(usernameTextField);
-
-		frameForDeletionOfUser.getContentPane().add(delPanel, BorderLayout.CENTER);
-		frameForDeletionOfUser.getContentPane().add(deleteButton, BorderLayout.SOUTH);
-
-		deleteButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String username = usernameTextField.getText();
-				deleteLineByUsername(username);
-				usernameTextField.setText("");
-			}
-		});
-
-		frameForDeletionOfUser.setVisible(true);
 	}
 
 	public static void modifyUserData(String csvFile, String tempFile, String usernameToModify, String[] newData) {

@@ -35,7 +35,6 @@ public class validation {
 	public static boolean isValidAdress(String adress) {
 		String expressionString = "[a-zA-Z0-9\\\\\\s.\\|'\"]+";
 		return adress.matches(expressionString);
-//			return true;
 	}
 
 	// Validating username
@@ -43,28 +42,7 @@ public class validation {
 		String expressionString = "^(?!.*\\.\\.)(?!.*\\.$)[^\\W][\\w.]{0,29}$";			
 			return username.matches(expressionString);
 	}
-//	private static boolean isNotDuplicateUsername(String usernameForCheck) {
-//	    boolean isNotDuplicate = true;
-//	    String csvFile = "src/data/userdata.csv";
-//	    try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
-//	        String line;
-//	        while ((line = reader.readLine()) != null) {
-//	            String[] value = line.split("\\|");
-//	            String username = value[7].trim(); 
-//
-//	            if (usernameForCheck.equals(username)) {
-//	                isNotDuplicate = false;
-//	                break;
-//	            }
-//	        }
-//	    } catch (IOException e) {
-//	        e.printStackTrace();
-//	    }
-//
-//	    return isNotDuplicate;
-//	}
 
-	
 	// Validating password
 
 	public static boolean IsValidPassword(String password) {
