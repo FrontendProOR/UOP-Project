@@ -497,7 +497,7 @@ public class AgencijaAdministratorWindow extends JFrame {
                     // Update the status to "Approved"
                     reservationTable.setValueAt(Status.Completed, selectedReservationRow, 3); // Assuming the status column index is 3
                 } else {
-                    // No row selected
+                    // No row selected d
                     System.out.println("No row selected.");
                 }
         	}
