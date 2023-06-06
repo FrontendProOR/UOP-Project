@@ -167,9 +167,7 @@ public class Arrangment {
 		this.deleted = deleted;
 	}
 
-	/**
-	 * 
-	 */
+	
 	protected long id;
 
 	public long getSellerID() {

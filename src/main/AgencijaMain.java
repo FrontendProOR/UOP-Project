@@ -15,16 +15,18 @@ public class AgencijaMain {
 //few generated users add Role in 
 		//ADMIN USERNAME I SIFRA: milan123 Sifra54321
 		//jovan12345 Sifra54321
-		Reservation letoGrckaReservation = new Reservation(2,LocalDateTime.now(),10);
-		Arrangment aranzmaniGrckaArrangment = new Arrangment("src/image/arrangment1.jpg",LocalDateTime.now(),"Greece","Description",100,653.99,0.10);
-		Turist djokaTurist = new Turist("Djordje","Cvarkov","1212973093222","Pejicevi Salasi 6 Novi Sad","djoks123","Sifra54321");
-		System.out.println(djokaTurist.getName()+" "+ djokaTurist.getSurname() +" koji zivi u : "+ djokaTurist.getAddress());
-		System.out.println(djokaTurist.authenticatePassword("Sifra5321"));
-		System.out.println(djokaTurist);
-		System.out.println(djokaTurist.getRole());
-		Administrator kresoAdministrator = new Administrator("Nenad","Solajic","1010004123123","Brace Ribnikar 1 Novi Sad","kreso123","Sifra12345");
-		System.out.println(kresoAdministrator.getRole()+" "+kresoAdministrator.authenticatePassword("Sifra12345"));
-		System.out.println(aranzmaniGrckaArrangment.getInfo());
+//		Arrangment aranzmaniGrckaArrangment = new Arrangment("src/image/arrangment1.jpg",LocalDateTime.now(),"Greece","Description",100,653.99,0.10);
+//		Turist djokaTurist = new Turist("Djordje","Cvarkov","1212973093222","Pejicevi Salasi 6 Novi Sad","djoks123","Sifra54321");
+//		System.out.println(djokaTurist.getName()+" "+ djokaTurist.getSurname() +" koji zivi u : "+ djokaTurist.getAddress());
+//		System.out.println(djokaTurist.authenticatePassword("Sifra5321"));
+//		System.out.println(djokaTurist);
+//		System.out.println(djokaTurist.getRole());
+//		Administrator kresoAdministrator = new Administrator("Nenad","Solajic","1010004123123","Brace Ribnikar 1 Novi Sad","kreso123","Sifra12345");
+//		System.out.println(kresoAdministrator.getRole()+" "+kresoAdministrator.authenticatePassword("Sifra12345"));
+//		System.out.println(aranzmaniGrckaArrangment.getInfo());
+		
+		Reservation rezervacija = new Reservation("23973286420934","2",8,LocalDateTime.now(),7);
+		System.out.println(rezervacija.getData());
 	}
 	
 }

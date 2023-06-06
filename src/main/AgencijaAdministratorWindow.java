@@ -25,11 +25,14 @@ import javax.swing.table.DefaultTableModel;
 import mainStructure.Administrator;
 import mainStructure.Agent;
 import mainStructure.Arrangment;
+import mainStructure.Status;
 import mainStructure.Turist;
 import mainStructure.TypeOfAccommodation;
 import mainStructure.TypeOfArrangement;
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -43,6 +46,9 @@ import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import validation.validation;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -458,10 +464,80 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JScrollPane arrangmentScrollPane = new JScrollPane(table5);
 		panel_3.add(arrangmentScrollPane, "cell 2 0 1 2, grow");
 
-		JPanel panel_4 = new JPanel();
-		tabbedPane.addTab("Reservations", null, panel_4, null);
+		
+		JPanel panel_4 = new JPanel(new BorderLayout());
+        tabbedPane.addTab("Reservations", null, panel_4, null);
+
+        JPanel leftPanelReservation = new JPanel();
+        leftPanelReservation.setLayout(new BoxLayout(leftPanelReservation, BoxLayout.Y_AXIS));
+        panel_4.add(leftPanelReservation, BorderLayout.WEST);
+
+        leftPanelReservation.add(Box.createRigidArea(new Dimension(0, 40)));
+        
+        JButton approveReservationButton = new JButton("Approve Reservation");
+        approveReservationButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, approveReservationButton.getPreferredSize().height));
+        leftPanelReservation.add(approveReservationButton);
+
+        leftPanelReservation.add(Box.createRigidArea(new Dimension(0, 40)));
+        
+        JButton deleteReservationButton = new JButton("Delete Reservation");
+        deleteReservationButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, deleteReservationButton.getPreferredSize().height));
+        leftPanelReservation.add(deleteReservationButton);
+
+        
+        String[] columnNamesReservations = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time"};
+        DefaultTableModel tableModelReservation = new DefaultTableModel(columnNamesReservations, 0);
+        JTable reservationTable = new JTable(tableModelReservation);
+
+        approveReservationButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		// Handle approve reservation button click
+        		int selectedReservationRow = reservationTable.getSelectedRow();
+        		if (selectedReservationRow != -1) {
+                    // Update the status to "Approved"
+                    reservationTable.setValueAt(Status.Completed, selectedReservationRow, 3); // Assuming the status column index is 3
+                } else {
+                    // No row selected
+                    System.out.println("No row selected.");
+                }
+        	}
+        });
+        deleteReservationButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		// Handle delete reservation button click
+        		int selectedReservationRow = reservationTable.getSelectedRow();
+        		
+        		if (selectedReservationRow != -1) {
+                    // Update the status to "Canceled"
+                    reservationTable.setValueAt(Status.Canceled, selectedReservationRow, 3); // Assuming the status column index is 3
+                } else {
+                    // No row selected
+                    System.out.println("No row selected.");
+                }
+        	}
+        });
+        
+        JScrollPane scrollReservationPane = new JScrollPane(reservationTable);
+        panel_4.add(scrollReservationPane, BorderLayout.CENTER);
+		
+        String filePath = "src/data/reservations.csv";
+        loadReservationData(filePath,reservationTable);
 	}
 
+	private void loadReservationData(String filePath,JTable reservationTable) {
+        DefaultTableModel tableModel = (DefaultTableModel) reservationTable.getModel();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split("\\|");
+                tableModel.addRow(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+	
 	private ImageIcon createResizedImageIcon(String path, int width, int height) {
 		ImageIcon imageIcon = new ImageIcon(path);
 		Image image = imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT);
@@ -980,8 +1056,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 									notDuplicateUsernameOrJmbg = false;
 									String message = "Username or JMBG is already in use. Please try other credentials or contact support.";
 									String title = "Information Dialog";
-									JOptionPane.showMessageDialog(null, message, title,
-											JOptionPane.INFORMATION_MESSAGE);
+									JOptionPane.showMessageDialog(null, message, title,JOptionPane.INFORMATION_MESSAGE);
 								}
 							}
 							if (notDuplicateUsernameOrJmbg) {
