@@ -39,8 +39,8 @@ public class validation {
 
 	// Validating username
 	public static boolean isValidUsername(String username) {
-		String expressionString = "^(?!.*\\.\\.)(?!.*\\.$)[^\\W][\\w.]{0,29}$";			
-			return username.matches(expressionString);
+		String expressionString = "^(?!.*\\.\\.)(?!.*\\.$)[^\\W][\\w.]{0,29}$";
+		return username.matches(expressionString);
 	}
 
 	// Validating password
@@ -49,4 +49,45 @@ public class validation {
 		String expressionString = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$";
 		return password.matches(expressionString);
 	}
+
+	// Validating number any numeric value I dont have time to make more complex
+	// stuff
+	public static boolean isLong(String str) {
+		try {
+			Long.parseLong(str);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	public static boolean isNumeric(String str) {
+		try {
+			// Try parsing the string as a long
+			Long.parseLong(str);
+			return true;
+		} catch (NumberFormatException e1) {
+			try {
+				// Try parsing the string as an int
+				Integer.parseInt(str);
+				return true;
+			} catch (NumberFormatException e2) {
+				try {
+					// Try parsing the string as a float
+					Float.parseFloat(str);
+					return true;
+				} catch (NumberFormatException e3) {
+					try {
+						// Try parsing the string as a double
+						Double.parseDouble(str);
+						return true;
+					} catch (NumberFormatException e4) {
+						// The string is not a valid number
+						return false;
+					}
+				}
+			}
+		}
+	}
+
 }

@@ -1,7 +1,9 @@
 package mainStructure;
 
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.Random;
+
 //import java.util.*;
 
 /**
@@ -9,25 +11,90 @@ import java.util.Random;
  */
 public class Arrangment {
 
+	private long sellerID;
+
+	private TypeOfArrangement typeOfArrangment;
+
+	private String availableDate;
+
+	private boolean deleted;
+
+	private TypeOfAccommodation accomodation;
+
+	private String numberOfRooms;
+
+	private String numberOfOvernightStays;
+
 	public Arrangment() {
+		this.id = 0;
+		this.sellerID = 0;
+		this.typeOfArrangment = TypeOfArrangement.LongJourneys;
+		this.picture = "";
+		this.numberOfOvernightStays = "0";
+		this.availableDate = "01.01.2022";
+		this.numberOfRooms = "0";
+		this.accomodation = TypeOfAccommodation.Hotel;
+		this.unitPrice = "0.0";
+		this.fairDiscount = "0";
+		this.deleted = false;
 	}
 
-	public Arrangment(String picture, LocalDateTime dateAndTime,String title,String description, int capacity, double price, double fairDiscount) {
-		long id = new Random().nextLong();
+	public Arrangment(long id,long sellerID,String picture, TypeOfArrangement typeOfArrangement,String availableDate, String price, String fairDiscount, boolean deleted, TypeOfAccommodation typeOfAccommodation, String numberOfRooms, String numberOfOvernightStays) {
+		if(id == 0) {
+			id = new Random().nextLong();
+		}
+		if(sellerID == 0) {
+			sellerID = new Random().nextLong();
+		}
 		this.id = id;
+		this.sellerID = sellerID;
+		this.typeOfArrangment = typeOfArrangement;
 		this.picture = picture;
-		this.title = title;
-		this.description = description;
-		this.dateAndTime = dateAndTime;
-		this.capacity = capacity;
-		this.price = price;
+		this.numberOfOvernightStays = numberOfOvernightStays;
+		this.availableDate = availableDate;
+		this.numberOfRooms = numberOfRooms;
+		this.accomodation = typeOfAccommodation;
+		this.unitPrice = price;
 		this.fairDiscount = fairDiscount;
+		this.deleted = deleted;
+	}
+
+	public Object getNumberOfOvernightStays() {
+		return numberOfOvernightStays;
+	}
+
+	public void setNumberOfOvernightStays(String numberOfOvernightStays) {
+		this.numberOfOvernightStays = numberOfOvernightStays;
+	}
+
+	public Object getNumberOfRooms() {
+		return numberOfRooms;
+	}
+
+	public void setNumberOfRooms(String numberOfRooms) {
+		this.numberOfRooms = numberOfRooms;
+	}
+
+	public Object getAccomodation() {
+		return accomodation;
+	}
+
+	public void setAccomodation(TypeOfAccommodation accomodation) {
+		this.accomodation = accomodation;
 	}
 
 	public String getInfo() {
-		return this.id+"|"+this.picture+"|"+this.dateAndTime+"|"+this.title+"|"+this.description+"|"+this.capacity+"|"+this.price+"|"+this.fairDiscount;
+		return this.id+"|"+this.sellerID+"|"+this.typeOfArrangment.ordinal()+"|"+this.picture+"|"+this.availableDate+"|"+this.numberOfOvernightStays+"|"+this.numberOfRooms+"|"+this.accomodation.ordinal()+"|"+this.unitPrice+"|"+this.fairDiscount+"|"+this.deleted;
 	}
 	
+	public String getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(String unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
 	public String getPicture() {
 		return picture;
 	}
@@ -52,42 +119,74 @@ public class Arrangment {
 		this.picture = picture;
 	}
 
-	public LocalDateTime getDateAndTime() {
-		return dateAndTime;
+	public String getAvailableDate() {
+		return availableDate;
 	}
 
-	public void setDateAndTime(LocalDateTime dateAndTime) {
-		this.dateAndTime = dateAndTime;
+	public void setAvailableDate(String availableDate) {
+		this.availableDate = availableDate;
 	}
 
-	public int getCapacity() {
+	public String getCapacity() {
 		return capacity;
 	}
 
-	public void setCapacity(int capacity) {
+	public void setCapacity(String capacity) {
 		this.capacity = capacity;
 	}
 
-	public double getPrice() {
-		return price;
+	public String getPrice() {
+		return unitPrice;
 	}
 
-	public void setPrice(double price) {
-		this.price = price;
+	public void setPrice(String price) {
+		this.unitPrice = price;
 	}
 
-	public double getFairDiscount() {
+	public String getFairDiscount() {
 		return fairDiscount;
 	}
 
-	public void setFairDiscount(double fairDiscount) {
+	public void setFairDiscount(String fairDiscount) {
 		this.fairDiscount = fairDiscount;
+	}
+
+	public TypeOfArrangement getTypeOfArrangment() {
+		return typeOfArrangment;
+	}
+
+	public void setTypeOfArrangment(TypeOfArrangement typeOfArrangment) {
+		this.typeOfArrangment = typeOfArrangment;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	/**
 	 * 
 	 */
 	protected long id;
+
+	public long getSellerID() {
+		return sellerID;
+	}
+
+	public void setSellerID(long sellerID) {
+		this.sellerID = sellerID;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	protected String title;
 	
@@ -100,21 +199,20 @@ public class Arrangment {
 	/**
 	 * 
 	 */
-	protected LocalDateTime dateAndTime;
 
 	/**
 	 * 
 	 */
-	protected int capacity;
+	protected String capacity;
 
 	/**
 	 * 
 	 */
-	protected double price;
+	protected String unitPrice;
 
 	/**
 	 * 
 	 */
-	protected double fairDiscount;
+	protected String fairDiscount;
 
 }

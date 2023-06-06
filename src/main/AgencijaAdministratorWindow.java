@@ -15,13 +15,19 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Random;
+import java.util.GregorianCalendar;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 import mainStructure.Administrator;
 import mainStructure.Agent;
+import mainStructure.Arrangment;
 import mainStructure.Turist;
+import mainStructure.TypeOfAccommodation;
+import mainStructure.TypeOfArrangement;
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
@@ -32,8 +38,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
+import net.sourceforge.jdatepicker.JDatePicker;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import validation.validation;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -44,9 +53,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import java.awt.FlowLayout;
-import javax.swing.Icon;
 
-//dodati status u tabelu i zacrveniti row u tabeli
 public class AgencijaAdministratorWindow extends JFrame {
 
 	private static final long serialVersionUID = 3028218694305485178L;
@@ -135,8 +142,6 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton_1 = new JButton("Delete Tourist");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// proslediti u funckciju iznad vrednost celije username na selectedrow i treba
-				// funkciju izmeniti da samo brise csv fajl
 				int selectedRowPosition = table.getSelectedRow();
 				String usernameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 7);
 				deleteLineByUsername(usernameString);
@@ -219,7 +224,6 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton_4 = new JButton("Delete Admin");
 		btnNewButton_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Ovde je popravljeno brisanje na selekt
 				int selectedRowPosition = table1.getSelectedRow();
 				String usernameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 7);
 				deleteLineByUsername(usernameString);
@@ -316,7 +320,6 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JScrollPane scrollPane2 = new JScrollPane(table2);
 		panel_2.add(scrollPane2, "cell 0 0, grow");
 
-///////////////////////////////////////////////////////////////////////////////////////////
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Arrangments", null, panel_3, null);
 		panel_3.setLayout(new MigLayout("fill"));
@@ -325,15 +328,26 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JLabel lblImage = new JLabel(imageIcon);
 
 		JPanel labelsPanel = new JPanel(new MigLayout("fill, gapy 30"));
-		JLabel lblTitle = new JLabel("Title");
-		JLabel lblDescription = new JLabel("Description");
-		JLabel lblPrice = new JLabel("Price");
-		JLabel lblCapacity = new JLabel("Capacity");
-		JLabel lblFairDiscount = new JLabel("Discount");
-		labelsPanel.add(lblTitle, "wrap");
-		labelsPanel.add(lblDescription, "wrap");
-		labelsPanel.add(lblPrice, "wrap");
-		labelsPanel.add(lblCapacity, "wrap");
+
+		JLabel lblTypeOdArrangment = new JLabel("Type of Arrangment: ");
+		labelsPanel.add(lblTypeOdArrangment, "wrap");
+
+		JLabel lblTypeOfAccomodation = new JLabel("Type of Accomodation: ");
+		labelsPanel.add(lblTypeOfAccomodation, "wrap");
+
+		JLabel lblNumberOfOvernightStaysJLabel = new JLabel("Number of Overnight Stays: ");
+		labelsPanel.add(lblNumberOfOvernightStaysJLabel, "wrap");
+
+		JLabel lblAvailableDate = new JLabel("Available Date: ");
+		labelsPanel.add(lblAvailableDate, "wrap");
+
+		JLabel lblNumberOfRooms = new JLabel("Number of Available Rooms: ");
+		labelsPanel.add(lblNumberOfRooms, "wrap");
+
+		JLabel lblUnitPrice = new JLabel("Unit Price: ");
+		labelsPanel.add(lblUnitPrice, "wrap");
+
+		JLabel lblFairDiscount = new JLabel("Discount: ");
 		labelsPanel.add(lblFairDiscount, "wrap");
 
 		JPanel imageLabelsPanel = new JPanel(new MigLayout("fill"));
@@ -344,8 +358,15 @@ public class AgencijaAdministratorWindow extends JFrame {
 
 		JPanel buttonsPanel22 = new JPanel(new MigLayout("fill"));
 		JButton btn1 = new JButton("Add Arrangment");
+		btn1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				createArrangmentForm();
+
+			}
+		});
 		JButton btn2 = new JButton("Edit Arrangment");
 		JButton btn3 = new JButton("Delete Arrangment");
+
 		JButton btn4 = new JButton("Approve Agent Arrangment");
 		buttonsPanel22.add(btn1, "alignx right,wrap");
 		buttonsPanel22.add(btn2, "alignx right,wrap");
@@ -353,23 +374,22 @@ public class AgencijaAdministratorWindow extends JFrame {
 		buttonsPanel22.add(btn4, "alignx right,wrap");
 		panel_3.add(buttonsPanel22, "cell 1 0 1 2, grow");
 
-		// Add by who was arrangment added to DB
-		// When you login there are admins credentials that will be used later on as
-		// last property in csv file
-
-		String[] tableModel4 = { "ID", "Title", "Capacity", "Fair Discout", "Price", "Address" };
+		String[] tableModel4 = { "ID", "SellerID", "Type Arrangment", "Image", "Available Date",
+				"Number Overnight Stays", "Number Of Rooms", "Type Accomodation", "Unit Price", "Fair Discout" };
 		DefaultTableModel tableModelArrangments = new DefaultTableModel(tableModel4, 0);
 		JTable table5 = new JTable();
 		table5.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		String[][] allArrangments = new String[0][5];
+		String[][] allArrangments = new String[0][8];
 		String csvFile3 = "src/data/arrangments.csv";
 		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile3))) {
 			String line;
 			int i = 0;
 			while ((line = reader.readLine()) != null) {
 				String[] valueOfAArrangment = line.split("\\|");
-				String[] arrangmentsStrings = { valueOfAArrangment[0], valueOfAArrangment[3], valueOfAArrangment[5],
-						valueOfAArrangment[7], valueOfAArrangment[6], valueOfAArrangment[1] };
+				String[] arrangmentsStrings = { valueOfAArrangment[0], valueOfAArrangment[1], valueOfAArrangment[2],
+						valueOfAArrangment[3], valueOfAArrangment[4], valueOfAArrangment[5], valueOfAArrangment[6],
+						valueOfAArrangment[7], valueOfAArrangment[8], valueOfAArrangment[9] };
+
 				allArrangments = Arrays.copyOf(allArrangments, allArrangments.length + 1);
 				allArrangments[i] = arrangmentsStrings;
 				tableModelArrangments.addRow(arrangmentsStrings);
@@ -378,6 +398,26 @@ public class AgencijaAdministratorWindow extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		btn2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int rowOfSelectedArrangmentID = table5.getSelectedRow();
+				if (rowOfSelectedArrangmentID != -1) {
+					int selectedArrangmentID = (int) rowOfSelectedArrangmentID;
+					changeArrangmentData(selectedArrangmentID);
+				}
+			}
+		});
+
+		btn3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int rowOfSelectedArrangmentID = table5.getSelectedRow();
+				if (rowOfSelectedArrangmentID != -1) {
+					String selectedArrangmentID = (String) table5.getValueAt(rowOfSelectedArrangmentID, 0);
+					deleteLineArrangment(selectedArrangmentID);
+					tableModelArrangments.removeRow(rowOfSelectedArrangmentID);
+				}
+			}
+		});
 
 		table5.setModel(tableModelArrangments);
 		table5.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -388,16 +428,26 @@ public class AgencijaAdministratorWindow extends JFrame {
 					int selectedRow = table5.getSelectedRow();
 
 					if (selectedRow != -1) {
-						String imagePath = (String) table5.getValueAt(selectedRow, 5);
+						String imagePath = (String) table5.getValueAt(selectedRow, 3);
 						if (imagePath != null && !imagePath.isEmpty()) {
-							String title = (String) tableModelArrangments.getValueAt(selectedRow, 1);
-							String capacity = (String) tableModelArrangments.getValueAt(selectedRow, 2);
-							String fairDiscount = (String) tableModelArrangments.getValueAt(selectedRow, 3);
-							String price = (String) tableModelArrangments.getValueAt(selectedRow, 4);
-							lblTitle.setText("Title: " + title);
-							lblCapacity.setText("Capacity: " + capacity);
-							lblFairDiscount.setText("Fair Discout: " + fairDiscount);
-							lblPrice.setText("Price: " + price);
+							String typeOfArrangmentString = (String) tableModelArrangments.getValueAt(selectedRow, 2);
+							String availableDateString = (String) tableModelArrangments.getValueAt(selectedRow, 4);
+							String numberOfOvernightStayString = (String) tableModelArrangments.getValueAt(selectedRow,
+									5);
+							String numberOfRooms = (String) tableModelArrangments.getValueAt(selectedRow, 6);
+							String typeOfAccomodationString = (String) tableModelArrangments.getValueAt(selectedRow, 7);
+							String unitPrice = (String) tableModelArrangments.getValueAt(selectedRow, 8);
+							String fairDiscount = (String) tableModelArrangments.getValueAt(selectedRow, 9);
+
+							lblTypeOdArrangment.setText("Type of arrangment: " + typeOfArrangmentString);
+							lblTypeOfAccomodation.setText("Type of Accomodation: " + typeOfAccomodationString);
+							lblNumberOfRooms.setText("Number Of Rooms: " + numberOfRooms);
+							lblNumberOfOvernightStaysJLabel
+									.setText("Number Of Overnight Stays: " + numberOfOvernightStayString);
+							lblAvailableDate.setText("Available Date: " + availableDateString);
+							lblFairDiscount.setText("Fair Discount: " + fairDiscount);
+							lblUnitPrice.setText("Unit Price: " + unitPrice);
+
 							ImageIcon selectedImageIcon = createResizedImageIcon(imagePath, 400, 300);
 							lblImage.setIcon(selectedImageIcon);
 						}
@@ -408,8 +458,6 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JScrollPane arrangmentScrollPane = new JScrollPane(table5);
 		panel_3.add(arrangmentScrollPane, "cell 2 0 1 2, grow");
 
-//////////////////////////////////////////////////////////////////////////////////////////
-
 		JPanel panel_4 = new JPanel();
 		tabbedPane.addTab("Reservations", null, panel_4, null);
 	}
@@ -418,6 +466,347 @@ public class AgencijaAdministratorWindow extends JFrame {
 		ImageIcon imageIcon = new ImageIcon(path);
 		Image image = imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT);
 		return new ImageIcon(image);
+	}
+
+	public static String[] loadRowData(String csvFilePath, int rowId) {
+		String[] rowData = null;
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(csvFilePath))) {
+			String line;
+			int currentRowId = 0;
+
+			while ((line = reader.readLine()) != null) {
+				if (currentRowId == rowId) {
+					rowData = line.split("\\|");
+					break;
+				}
+
+				currentRowId++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return rowData;
+	}
+
+	public static TypeOfAccommodation getTypeOfAccommodation(int ordinal) {
+		if (ordinal >= 0 && ordinal < TypeOfAccommodation.values().length) {
+			return TypeOfAccommodation.values()[ordinal];
+		} else {
+
+			return null;
+		}
+	}
+
+	public static TypeOfArrangement getTypeOfArrangment(int ordinal) {
+		if (ordinal >= 0 && ordinal < TypeOfArrangement.values().length) {
+			return TypeOfArrangement.values()[ordinal];
+		} else {
+
+			return null;
+		}
+	}
+
+	private static String formatDate(JDatePicker datePicker, Object date) {
+		if (date != null) {
+			SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
+			GregorianCalendar cal = new GregorianCalendar();
+			String datum = format.format(datePicker.getModel().getValue());
+			try {
+				cal.setTime(format.parse(datum));
+				String formattedDate = format.format(cal.getTime());
+				return formattedDate;
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+		return "";
+	}
+
+	public static void changeArrangmentData(int selectedRowID) {
+		JFrame frame = new JFrame("Arrangement Form");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setSize(650, 700);
+		frame.getContentPane().setLayout(new GridLayout(15, 2));
+
+		String[] rowData = loadRowData("src\\data\\arrangments.csv", selectedRowID);
+
+		JLabel idLabel = new JLabel("ID:");
+		JTextField idTextField = new JTextField(10);
+
+		JLabel sellerIDLabel = new JLabel("Seller ID:");
+		JTextField sellerTextField = new JTextField(10);
+
+		JLabel pictureLabel = new JLabel("Picture:");
+		JTextField pictureTextField = new JTextField(10);
+
+		JLabel typeOfAccomodationLabel = new JLabel("Type of Accomodation:");
+		JComboBox<TypeOfAccommodation> accomodationBox = new JComboBox<>(TypeOfAccommodation.values());
+
+		JLabel typeOfArrangmentLabel = new JLabel("Type of Arrangement:");
+		JComboBox<TypeOfArrangement> arrangmentBox = new JComboBox<>(TypeOfArrangement.values());
+
+		JLabel availableDateLabel = new JLabel("Available Date:");
+		UtilDateModel dateModel = new UtilDateModel();
+		JDatePanelImpl datePanel = new JDatePanelImpl(dateModel);
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+
+		JLabel priceLabel = new JLabel("Price:");
+		JTextField priceTextField = new JTextField(10);
+
+		JLabel fairDiscountLabel = new JLabel("Fair Discount:");
+		JTextField fairDiscountTextField = new JTextField(10);
+
+		JLabel numberOfRoomsLabel = new JLabel("Number of Rooms:");
+		JTextField numberOfRoomsTextField = new JTextField(10);
+
+		JLabel numberOfOvernightStaysLabel = new JLabel("Number of Overnight Stays:");
+		JTextField numberOfOvernightStaysTextField = new JTextField(10);
+
+		if (rowData != null) {
+			idTextField.setText(rowData[0]);
+			sellerTextField.setText(rowData[1]);
+			pictureTextField.setText(rowData[3]);
+			int ordinalAccomodation = Integer.parseInt(rowData[7]);
+			accomodationBox.setSelectedItem(getTypeOfAccommodation(ordinalAccomodation));
+
+			int ordinalArrangment = Integer.parseInt(rowData[2]);
+			arrangmentBox.setSelectedItem(getTypeOfArrangment(ordinalArrangment));
+			String dayString = rowData[4].substring(0, 2);
+			int day = Integer.parseInt(dayString);
+			String monthString = rowData[4].substring(3, 5);
+			int month = Integer.parseInt(monthString);
+			String yearString = rowData[4].substring(6, 10);
+			int year = Integer.parseInt(yearString);
+			datePicker.getModel().setDay(day);
+			datePicker.getModel().setMonth(month);
+			datePicker.getModel().setYear(year);
+
+			priceTextField.setText(rowData[8]);
+			fairDiscountTextField.setText(rowData[9]);
+			numberOfRoomsTextField.setText(rowData[6]);
+			numberOfOvernightStaysTextField.setText(rowData[5]);
+		} else {
+			JOptionPane.showMessageDialog(frame, "Row not found.");
+		}
+
+		frame.getContentPane().add(idLabel);
+		frame.getContentPane().add(idTextField);
+		frame.getContentPane().add(sellerIDLabel);
+		frame.getContentPane().add(sellerTextField);
+		frame.getContentPane().add(pictureLabel);
+		frame.getContentPane().add(pictureTextField);
+		frame.getContentPane().add(typeOfAccomodationLabel);
+		frame.getContentPane().add(accomodationBox);
+		frame.getContentPane().add(typeOfArrangmentLabel);
+		frame.getContentPane().add(arrangmentBox);
+		frame.getContentPane().add(availableDateLabel);
+		frame.getContentPane().add(datePicker);
+		frame.getContentPane().add(priceLabel);
+		frame.getContentPane().add(priceTextField);
+		frame.getContentPane().add(fairDiscountLabel);
+		frame.getContentPane().add(fairDiscountTextField);
+		frame.getContentPane().add(numberOfRoomsLabel);
+		frame.getContentPane().add(numberOfRoomsTextField);
+		frame.getContentPane().add(numberOfOvernightStaysLabel);
+		frame.getContentPane().add(numberOfOvernightStaysTextField);
+
+		boolean deleted = false;
+		JButton editButton = new JButton("Edit Arrangement");
+		editButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				StringBuilder csvData = new StringBuilder();
+
+				try {
+					List<String> lines = Files.readAllLines(Paths.get("src\\data\\arrangments.csv"));
+
+					for (int i = 0; i < lines.size(); i++) {
+						String line = lines.get(i);
+
+						if (i == selectedRowID) {
+							String newData = idTextField.getText() + "|" + sellerTextField.getText() + "|"
+									+ arrangmentBox.getSelectedIndex() + "|" + pictureTextField.getText() + "|"
+									+ formatDate(datePicker, datePicker.getModel().getValue()) + "|"
+									+ numberOfOvernightStaysTextField.getText() + "|" + numberOfRoomsTextField.getText()
+									+ "|" + accomodationBox.getSelectedIndex() + "|" + priceTextField.getText() + "|"
+									+ fairDiscountTextField.getText() + "|" + deleted;
+
+							csvData.append(newData).append("\n");
+						} else {
+
+							csvData.append(line).append("\n");
+						}
+					}
+
+					Files.write(Paths.get("src\\data\\arrangments.csv"), csvData.toString().getBytes());
+				} catch (IOException e2) {
+					e2.printStackTrace();
+				}
+			}
+		});
+
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		buttonPanel.add(editButton);
+		frame.getContentPane().add(buttonPanel);
+
+		frame.setVisible(true);
+	}
+
+	public static void deleteLineArrangment(String IdArrangmentToDelete) {
+		String csvFile = "src/data/arrangments.csv";
+		String tempFile = "src/data/temp1.csv";
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(csvFile));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] valuesOfALine = line.split("\\|");
+				String username = valuesOfALine[0];
+
+				if (!username.equals(IdArrangmentToDelete)) {
+					writer.write(line);
+					writer.newLine();
+				}
+			}
+
+			reader.close();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Path source = Paths.get(tempFile);
+		Path destination = Paths.get(csvFile);
+
+		try {
+			Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+			System.out.println("Success");
+		} catch (IOException e) {
+			System.out.println("Error renaming the file: " + e.getMessage());
+		}
+	}
+
+	private static void createArrangmentForm() {
+		JFrame frame = new JFrame("Arrangement Form");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setSize(650, 700);
+		frame.getContentPane().setLayout(new GridLayout(15, 2));
+
+		JLabel idLabel = new JLabel("ID:");
+		JTextField idTextField = new JTextField(10);
+
+		JLabel sellerIDLabel = new JLabel("Seller ID:");
+		JTextField sellerTextField = new JTextField(10);
+
+		JLabel pictureLabel = new JLabel("Picture:");
+		JTextField pictureTextField = new JTextField(10);
+
+		JLabel typeOfAccomodationLabel = new JLabel("Type of Accomodation:");
+		JComboBox<TypeOfAccommodation> accomodationBox = new JComboBox<>(TypeOfAccommodation.values());
+
+		JLabel typeOfArrangmentLabel = new JLabel("Type of Arrangement:");
+		JComboBox<TypeOfArrangement> arrangmentBox = new JComboBox<>(TypeOfArrangement.values());
+
+		JLabel availableDateLabel = new JLabel("Available Date:");
+		UtilDateModel dateModel = new UtilDateModel();
+		JDatePanelImpl datePanel = new JDatePanelImpl(dateModel);
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+
+		JLabel priceLabel = new JLabel("Price:");
+		JTextField priceTextField = new JTextField(10);
+
+		JLabel fairDiscountLabel = new JLabel("Fair Discount:");
+		JTextField fairDiscountTextField = new JTextField(10);
+
+		JLabel numberOfRoomsLabel = new JLabel("Number of Rooms:");
+		JTextField numberOfRoomsTextField = new JTextField(10);
+
+		JLabel numberOfOvernightStaysLabel = new JLabel("Number of Overnight Stays:");
+		JTextField numberOfOvernightStaysTextField = new JTextField(10);
+
+		frame.getContentPane().add(idLabel);
+		frame.getContentPane().add(idTextField);
+		frame.getContentPane().add(sellerIDLabel);
+		frame.getContentPane().add(sellerTextField);
+		frame.getContentPane().add(pictureLabel);
+		frame.getContentPane().add(pictureTextField);
+		frame.getContentPane().add(typeOfAccomodationLabel);
+		frame.getContentPane().add(accomodationBox);
+		frame.getContentPane().add(typeOfArrangmentLabel);
+		frame.getContentPane().add(arrangmentBox);
+		frame.getContentPane().add(availableDateLabel);
+		frame.getContentPane().add(datePicker);
+		frame.getContentPane().add(priceLabel);
+		frame.getContentPane().add(priceTextField);
+		frame.getContentPane().add(fairDiscountLabel);
+		frame.getContentPane().add(fairDiscountTextField);
+		frame.getContentPane().add(numberOfRoomsLabel);
+		frame.getContentPane().add(numberOfRoomsTextField);
+		frame.getContentPane().add(numberOfOvernightStaysLabel);
+		frame.getContentPane().add(numberOfOvernightStaysTextField);
+
+		boolean deleted = false;
+		JButton createButton = new JButton("Create Arrangement");
+		createButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
+				GregorianCalendar cal = new GregorianCalendar();
+				String datum = format.format(datePicker.getModel().getValue());
+				try {
+					cal.setTime(format.parse(datum));
+					String formattedDate = format.format(cal.getTime());
+					long longIdPrimitive1 = Long.parseLong(idTextField.getText());
+					long longSellerIdPrimitive1 = Long.parseLong(sellerTextField.getText());
+					Arrangment arrangement = new Arrangment(longIdPrimitive1, longSellerIdPrimitive1,
+							pictureTextField.getText(), (TypeOfArrangement) arrangmentBox.getSelectedItem(),
+							formattedDate, priceTextField.getText(), fairDiscountTextField.getText(), deleted,
+							(TypeOfAccommodation) accomodationBox.getSelectedItem(), numberOfRoomsTextField.getText(),
+							numberOfOvernightStaysTextField.getText());
+					String arrangmentInfoLineString = arrangement.getInfo();
+
+					if (validation.isNumeric(idTextField.getText()) && validation.isNumeric(sellerTextField.getText())
+							&& validation.isNumeric(numberOfOvernightStaysTextField.getText())
+							&& validation.isNumeric(numberOfRoomsTextField.getText())
+							&& validation.isNumeric(priceTextField.getText())
+							&& validation.isNumeric(fairDiscountTextField.getText())) {
+						handleCreateArrangement(arrangmentInfoLineString);
+						frame.dispose();
+					} else {
+						JOptionPane.showMessageDialog(frame, "Please fill in all required fields.");
+					}
+
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+		});
+
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		buttonPanel.add(createButton);
+		frame.getContentPane().add(buttonPanel);
+
+		frame.setVisible(true);
+
+	}
+
+	private static void handleCreateArrangement(String arrangmentLineToWrite) {
+		String CSV_FILE_PATH = "src/data/arrangments.csv";
+		try (FileWriter writer = new FileWriter(CSV_FILE_PATH, true)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(arrangmentLineToWrite);
+			writer.write(sb.toString());
+			writer.write(System.lineSeparator());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void createTouristForm() {
