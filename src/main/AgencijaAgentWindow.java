@@ -8,15 +8,11 @@ import javax.swing.border.EmptyBorder;
 
 public class AgencijaAgentWindow extends JFrame {
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -1969293607747042365L;
 	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -34,9 +30,7 @@ public class AgencijaAgentWindow extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+	
 	public AgencijaAgentWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);

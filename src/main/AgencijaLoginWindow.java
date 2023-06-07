@@ -130,7 +130,7 @@ public class AgencijaLoginWindow extends JFrame {
 
 								String role = values[1];
 								if (role.equals("Turist")) {
-									AgencijaTouristWindow touristWindow = new AgencijaTouristWindow();
+									AgencijaTouristWindow touristWindow = new AgencijaTouristWindow(values[0]);
 									touristWindow.setVisible(true);
 									dispose();
 								} else if (role.equals("Administrator")) {
