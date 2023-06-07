@@ -7,7 +7,9 @@ import java.lang.Integer;
 
 public abstract class User {
 
-	public User(String name, String surname, String JMBG, String address, String username, String password)
+	private String phoneNumber;
+
+	public User(String name, String surname, String JMBG, String address,String phoneNumber, String username, String password)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		byte[][] originalPassword = makeHashPassword(password);
 		String passwordHexString = auth.Pbkdf2.bytesToHex(originalPassword[0]);
@@ -19,6 +21,7 @@ public abstract class User {
 		this.gender = (Integer.valueOf(JMBG.substring(9, 12)) < 500) ? Gender.Male : Gender.Female;
 		this.JMBG = JMBG;
 		this.address = address;
+		this.phoneNumber = phoneNumber;
 		this.username = username;
 		this.password = passwordHexString;
 		this.salt = saltHexString;
@@ -26,7 +29,7 @@ public abstract class User {
 
 	public String userInfo() {
 		return this.id + "|" + this.role + "|" + this.name + "|" + this.surname + "|" + this.JMBG + "|" + this.gender
-				+ "|" + this.address + "|" + this.username + "|" + this.password + "|" + this.salt;
+				+ "|" + this.address +"|"+this.getPhoneNumber()+ "|" + this.username + "|" + this.password + "|" + this.salt;
 	}
 
 	private byte[][] makeHashPassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -127,6 +130,14 @@ public abstract class User {
 	 * Default constructor
 	 */
 	public User() {
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	protected long id;

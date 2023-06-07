@@ -10,8 +10,8 @@ import java.security.spec.InvalidKeySpecException;
  */
 public class Administrator extends User {
 
-    public Administrator(String name, String surname, String JMBG, String address, String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-		super(name, surname, JMBG, address, username, password);
+    public Administrator(String name, String surname, String JMBG, String address,String phoneNumber, String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		super(name, surname, JMBG, address,phoneNumber, username, password);
 		super.setRole(Role.Administrator);
 		// TODO Auto-generated constructor stub
 	}

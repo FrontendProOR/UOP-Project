@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -32,7 +33,6 @@ import mainStructure.TypeOfArrangement;
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -46,7 +46,6 @@ import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import validation.validation;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -97,9 +96,9 @@ public class AgencijaAdministratorWindow extends JFrame {
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setEnabled(true);
 		table.setFont(new Font("Arial", Font.PLAIN, 12));
-		String[] columnNamesForTourist = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address", "Username" };
+		String[] columnNamesForTourist = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address","Phone Number", "Username" };
 		DefaultTableModel tableModelTourist = new DefaultTableModel(columnNamesForTourist, 0);
-		String[][] allTourists = new String[0][8];
+		String[][] allTourists = new String[0][9];
 		String csvFile = "src/data/userdata.csv";
 		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
 			String line;
@@ -109,7 +108,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 				if ("Turist".equals(valueOfATourist[1])) {
 					String[] touristStrings = { valueOfATourist[0], valueOfATourist[1], valueOfATourist[2],
 							valueOfATourist[3], valueOfATourist[4], valueOfATourist[5], valueOfATourist[6],
-							valueOfATourist[7] };
+							valueOfATourist[7],valueOfATourist[8] };
 					allTourists = Arrays.copyOf(allTourists, allTourists.length + 1);
 					allTourists[i] = touristStrings;
 					tableModelTourist.addRow(touristStrings);
@@ -134,9 +133,10 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String surnameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 3);
 				String jmbgString = (String) tableModelTourist.getValueAt(selectedRowPosition, 4);
 				String addressString = (String) tableModelTourist.getValueAt(selectedRowPosition, 6);
-				String usernameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 7);
+				String phoneNumberString = (String) tableModelTourist.getValueAt(selectedRowPosition,7 );
+				String usernameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 8);
 				if (usernameString.length() != 0) {
-					changeUserDataForm(nameString, surnameString, jmbgString, addressString, usernameString);
+					changeUserDataForm(nameString, surnameString, jmbgString, addressString,phoneNumberString ,usernameString);
 				} else {
 					System.out.println("Please choose a user in table by clicking on a user row.");
 				}
@@ -149,7 +149,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int selectedRowPosition = table.getSelectedRow();
-				String usernameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 7);
+				String usernameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 8);
 				deleteLineByUsername(usernameString);
 				tableModelTourist.removeRow(selectedRowPosition);
 
@@ -181,9 +181,9 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JTable table1 = new JTable();
 		table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table1.setFont(new Font("Arial", Font.PLAIN, 12));
-		String[] columnNamesForAdmins = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address", "Username" };
+		String[] columnNamesForAdmins = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address","Phone Number", "Username" };
 		DefaultTableModel tableModelAdmin = new DefaultTableModel(columnNamesForAdmins, 0);
-		String[][] allAdmins = new String[0][8];
+		String[][] allAdmins = new String[0][9];
 		String csvFile1 = "src/data/userdata.csv";
 		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile1))) {
 			String line;
@@ -192,7 +192,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String[] valueOfAAdmin = line.split("\\|");
 				if ("Administrator".equals(valueOfAAdmin[1])) {
 					String[] adminsStrings = { valueOfAAdmin[0], valueOfAAdmin[1], valueOfAAdmin[2], valueOfAAdmin[3],
-							valueOfAAdmin[4], valueOfAAdmin[5], valueOfAAdmin[6], valueOfAAdmin[7] };
+							valueOfAAdmin[4], valueOfAAdmin[5], valueOfAAdmin[6], valueOfAAdmin[7],valueOfAAdmin[8] };
 					allAdmins = Arrays.copyOf(allAdmins, allAdmins.length + 1);
 					allAdmins[i] = adminsStrings;
 					tableModelAdmin.addRow(adminsStrings);
@@ -217,9 +217,10 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String surnameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 3);
 				String jmbgString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 4);
 				String addressString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 6);
-				String usernameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 7);
+				String phoneNumberString = (String)tableModelAdmin.getValueAt(selectedRowPosition, 7); 
+				String usernameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 8);
 				if (usernameString.length() != 0) {
-					changeUserDataForm(nameString, surnameString, jmbgString, addressString, usernameString);
+					changeUserDataForm(nameString, surnameString, jmbgString, addressString,phoneNumberString, usernameString);
 				} else {
 					System.out.println("Please choose a user in table by clicking on a user row.");
 				}
@@ -231,7 +232,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		btnNewButton_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int selectedRowPosition = table1.getSelectedRow();
-				String usernameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 7);
+				String usernameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 8);
 				deleteLineByUsername(usernameString);
 				tableModelAdmin.removeRow(selectedRowPosition);
 			}
@@ -258,9 +259,9 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JTable table2 = new JTable();
 		table2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table2.setFont(new Font("Arial", Font.PLAIN, 12));
-		String[] columnNamesForAgents = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address", "Username" };
+		String[] columnNamesForAgents = { "ID", "Role", "Name", "Surname", "JMBG", "Gender", "Address","Phone Number", "Username" };
 		DefaultTableModel tableModelAgents = new DefaultTableModel(columnNamesForAgents, 0);
-		String[][] allAgents = new String[0][8];
+		String[][] allAgents = new String[0][9];
 		String csvFile2 = "src/data/userdata.csv";
 		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile2))) {
 			String line;
@@ -269,7 +270,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String[] valueOfAAgent = line.split("\\|");
 				if ("Agent".equals(valueOfAAgent[1])) {
 					String[] agentStrings = { valueOfAAgent[0], valueOfAAgent[1], valueOfAAgent[2], valueOfAAgent[3],
-							valueOfAAgent[4], valueOfAAgent[5], valueOfAAgent[6], valueOfAAgent[7] };
+							valueOfAAgent[4], valueOfAAgent[5], valueOfAAgent[6], valueOfAAgent[7],valueOfAAgent[8] };
 					allAgents = Arrays.copyOf(allAgents, allAgents.length + 1);
 					allAgents[i] = agentStrings;
 					tableModelAgents.addRow(agentStrings);
@@ -294,9 +295,10 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String surnameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 3);
 				String jmbgString = (String) tableModelAgents.getValueAt(selectedRowPosition, 4);
 				String addressString = (String) tableModelAgents.getValueAt(selectedRowPosition, 6);
-				String usernameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 7);
+				String phoneNumberString = (String)tableModelAgents.getValueAt(selectedRowPosition,7); 
+				String usernameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 8);
 				if (usernameString.length() != 0) {
-					changeUserDataForm(nameString, surnameString, jmbgString, addressString, usernameString);
+					changeUserDataForm(nameString, surnameString, jmbgString, addressString,phoneNumberString, usernameString);
 				} else {
 					System.out.println("Please choose a user in table by clicking on a user row.");
 				}
@@ -308,7 +310,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		btnNewButton_7_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int selectedRowPosition = table2.getSelectedRow();
-				String usernameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 7);
+				String usernameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 8);
 				deleteLineByUsername(usernameString);
 				tableModelAgents.removeRow(selectedRowPosition);
 			}
@@ -484,34 +486,30 @@ public class AgencijaAdministratorWindow extends JFrame {
         deleteReservationButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, deleteReservationButton.getPreferredSize().height));
         leftPanelReservation.add(deleteReservationButton);
 
-        
         String[] columnNamesReservations = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time"};
         DefaultTableModel tableModelReservation = new DefaultTableModel(columnNamesReservations, 0);
         JTable reservationTable = new JTable(tableModelReservation);
 
         approveReservationButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		// Handle approve reservation button click
         		int selectedReservationRow = reservationTable.getSelectedRow();
+        		String arrangmentIdString = (String) reservationTable.getValueAt(selectedReservationRow, 1);
         		if (selectedReservationRow != -1) {
-                    // Update the status to "Approved"
-                    reservationTable.setValueAt(Status.Completed, selectedReservationRow, 3); // Assuming the status column index is 3
+                    reservationTable.setValueAt(Status.Completed, selectedReservationRow, 3);
+                    changeStatusOfReservation(selectedReservationRow,arrangmentIdString, Status.Completed,reservationTable);
                 } else {
-                    // No row selected d
                     System.out.println("No row selected.");
                 }
         	}
         });
         deleteReservationButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		// Handle delete reservation button click
         		int selectedReservationRow = reservationTable.getSelectedRow();
-        		
+        		String arrangmentIdString = (String) reservationTable.getValueAt(selectedReservationRow, 1);
         		if (selectedReservationRow != -1) {
-                    // Update the status to "Canceled"
-                    reservationTable.setValueAt(Status.Canceled, selectedReservationRow, 3); // Assuming the status column index is 3
+                    
+                    changeStatusOfReservation(selectedReservationRow, arrangmentIdString, Status.Canceled,reservationTable);  
                 } else {
-                    // No row selected
                     System.out.println("No row selected.");
                 }
         	}
@@ -522,6 +520,209 @@ public class AgencijaAdministratorWindow extends JFrame {
 		
         String filePath = "src/data/reservations.csv";
         loadReservationData(filePath,reservationTable);
+	}
+	
+	public static void incrementNumberOfRooms(String arrangementId) {
+	    String filePath = "src/data/arrangments.csv";
+	    int targetPosition = -1;
+
+	    List<String> lines = new ArrayList<>();
+	    try {
+	        lines = Files.readAllLines(Paths.get(filePath));
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+
+	    for (int i = 0; i < lines.size(); i++) {
+	        String line = lines.get(i);
+	        String[] fields = line.split("\\|");
+
+	        if (fields.length >= 1 && fields[0].equals(arrangementId)) {
+	            targetPosition = i;
+	            break;
+	        }
+	    }
+
+	    if (targetPosition != -1) {
+	        String line = lines.get(targetPosition);
+	        String[] fields = line.split("\\|");
+
+	        if (fields.length >= 7) {
+	            int numRooms = Integer.parseInt(fields[6]);
+	            numRooms++;
+	            fields[6] = String.valueOf(numRooms);
+
+	            String updatedLine = String.join("|", fields);
+	            lines.set(targetPosition, updatedLine);
+
+	            try {
+	                Files.write(Paths.get(filePath), lines);
+	                System.out.println("Number of rooms incremented successfully for arrangement ID: " + arrangementId);
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    } else {
+	        System.out.println("Arrangement ID not found: " + arrangementId);
+	    }
+	}
+	
+	public static void decrementNumberOfRooms(String arrangementId) {
+	    // This function should decrement the number of rooms for a specific arrangement ID in the "arrangments.csv" file
+	    String filePath = "src/data/arrangments.csv";
+	    int targetPosition = -1;
+
+	    // Read the contents of the CSV file into a list
+	    List<String> lines = new ArrayList<>();
+	    try {
+	        lines = Files.readAllLines(Paths.get(filePath));
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+
+	    // Locate the line with the specified arrangementId
+	    for (int i = 0; i < lines.size(); i++) {
+	        String line = lines.get(i);
+	        String[] fields = line.split("\\|");
+
+	        if (fields.length >= 1 && fields[0].equals(arrangementId)) {
+	            targetPosition = i;
+	            break;
+	        }
+	    }
+
+	    if (targetPosition != -1) {
+	        String line = lines.get(targetPosition);
+	        String[] fields = line.split("\\|");
+
+	        if (fields.length >= 7) {
+	            int numRooms = Integer.parseInt(fields[6]);
+	            if (numRooms > 0) {
+	                numRooms--; // Decrement the number of rooms by 1
+	                fields[6] = String.valueOf(numRooms);
+
+	                // Join the fields back into a line
+	                String updatedLine = String.join("|", fields);
+	                lines.set(targetPosition, updatedLine);
+
+	                // Write the updated data back to the CSV file
+	                try {
+	                    Files.write(Paths.get(filePath), lines);
+	                    System.out.println("Number of rooms decremented successfully for arrangement ID: " + arrangementId);
+	                } catch (IOException e) {
+	                    e.printStackTrace();
+	                }
+	            } else {
+//	            	this.status = Status.Failed;//So here if it fails it is going to update status as failed 
+	                System.out.println("Cannot decrement number of rooms. The room count is already 0 for arrangement ID: " + arrangementId);
+	            }
+	        }
+	    } else {
+	        System.out.println("Arrangement ID not found: " + arrangementId);
+	    }
+	}
+	
+	protected int numberOfAvailableRooms(String arrangmentIdString) {
+		String filePathForNumberOfAvailableRooms = "src/data/arrangments.csv";
+        
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePathForNumberOfAvailableRooms))) {
+            String line1;
+            while ((line1 = br.readLine()) != null) {
+                String[] values = line1.split("\\|");
+
+                if (values.length >= 6 && values[0].equals(arrangmentIdString)) {
+                    final String numberOfAvailableRoomString = values[6];	                    
+                    int numberOfAvailableRooms = Integer.parseInt(numberOfAvailableRoomString);
+                    return numberOfAvailableRooms;
+                    
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		return 0;
+	}
+	
+	private void changeStatusOfReservation(int selectedReservationRow,String arrangmentIdString ,Status status,JTable reservationTable) {
+	    if (selectedReservationRow != -1) {
+	        String csvFile = "src/data/reservations.csv";
+	        String tempFile = "src/data/tempReservation.csv";
+
+	        
+	        
+	        
+	        try (BufferedReader br = new BufferedReader(new FileReader(csvFile));
+	             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
+
+	            String line;
+	            int rowCounter = 0;
+
+	            while ((line = br.readLine()) != null) {
+	                if (rowCounter == selectedReservationRow) {
+	                    String[] columns = line.split("\\|");
+	                    if (status == Status.Canceled) {
+	                        if (columns.length >= 4) {
+	                        	if(columns[3].equals("Created")) {
+	                        		columns[3] = "Failed";
+	                        		line = String.join("|", columns);
+	                        		incrementNumberOfRooms(arrangmentIdString);
+	                        		reservationTable.setValueAt(Status.Failed, selectedReservationRow, 3);
+	                        	}else if(columns[3].equals("Completed")) {
+	                        		columns[3] = "Failed";
+	                        		line = String.join("|", columns);
+	                        		incrementNumberOfRooms(arrangmentIdString);
+	                        		reservationTable.setValueAt(Status.Failed, selectedReservationRow, 3);
+	                        	}else if(columns[3].equals("Canceled")) {
+	                        		columns[3] = "Failed";
+	                        		line = String.join("|", columns);
+	                        		incrementNumberOfRooms(arrangmentIdString);
+	                        		reservationTable.setValueAt(Status.Failed, selectedReservationRow, 3);
+	                        	}
+	                        	
+	                        	
+	                        } else {
+	                            System.out.println("Invalid data format.");
+	                            continue;
+	                        }
+	                    }
+	                    if (status == Status.Completed) {
+	                        if (columns.length >= 4) {
+	                        	if(numberOfAvailableRooms(arrangmentIdString) != 0) {
+	                        		columns[3] = "Completed";
+	                        		line = String.join("|", columns);
+	                        		//Here should decrement number of rooms
+	                        		reservationTable.setValueAt(Status.Completed, selectedReservationRow, 3);
+	                        		decrementNumberOfRooms(arrangmentIdString);	                        		
+	                        	}else {
+	                        		System.out.println("All rooms are occupied.");
+	                        	}
+	                        } else {
+	                            System.out.println("Invalid data format.");
+	                            continue;
+	                        }
+	                    }
+	                }
+	                bw.write(line);
+	                bw.newLine();
+	                rowCounter++;
+	            }
+
+	        } catch (IOException ex) {
+	            ex.printStackTrace();
+	        }
+
+	        try {
+	            Files.copy(Path.of(tempFile), Path.of(csvFile), StandardCopyOption.REPLACE_EXISTING);
+	            Files.delete(Path.of(tempFile));
+	            System.out.println("Status updated successfully.In case of enough rooms.");
+	        } catch (IOException ex) {
+	            System.out.println("Failed to update status.");
+	            ex.printStackTrace();
+	        }
+	    } else {
+	        System.out.println("No row selected.");
+	    }
 	}
 
 	private void loadReservationData(String filePath,JTable reservationTable) {
@@ -711,6 +912,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 									+ fairDiscountTextField.getText() + "|" + deleted;
 
 							csvData.append(newData).append("\n");
+							frame.dispose();
 						} else {
 
 							csvData.append(line).append("\n");
@@ -902,6 +1104,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JTextField jmbgTextField = new JTextField();
 		JLabel addressLabel = new JLabel("Address:");
 		JTextField addressTextField = new JTextField();
+		JLabel phoneNumberJLabel = new JLabel("Phone Number:");
+		JTextField phoneNumberTextField = new JTextField();
 		JLabel usernameLabel = new JLabel("Username:");
 		JTextField usernameTextField = new JTextField();
 		JLabel passwordLabel = new JLabel("Password:");
@@ -918,6 +1122,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		formPanel.add(jmbgTextField);
 		formPanel.add(addressLabel);
 		formPanel.add(addressTextField);
+		formPanel.add(phoneNumberJLabel);
+		formPanel.add(phoneNumberTextField);
 		formPanel.add(usernameLabel);
 		formPanel.add(usernameTextField);
 		formPanel.add(passwordLabel);
@@ -932,12 +1138,13 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String surname = surnameTextField.getText();
 				String jmbg = jmbgTextField.getText();
 				String address = addressTextField.getText();
+				String phoneNumberString = phoneNumberTextField.getText();
 				String username = usernameTextField.getText();
 				String password = new String(passwordField.getPassword());
 				String role = (String) roleComboBox.getSelectedItem();
 				if (validation.IsValidNameSurname(name) && validation.IsValidNameSurname(surname)
 						&& validation.isValidJMBG(jmbg) && validation.isValidAdress(address)
-						&& validation.isValidUsername(username) && validation.IsValidPassword(password)) {
+						&& validation.isValidUsername(username) && validation.IsValidPassword(password) && validation.isValidPhoneNumber(phoneNumberString)) {
 					String filePath = "src/data/userdata.csv";
 					if (role == "Turist") {
 						mainStructure.Turist user;
@@ -946,19 +1153,18 @@ public class AgencijaAdministratorWindow extends JFrame {
 							boolean notDuplicateUsernameOrJmbg = true;
 							while ((line = reader.readLine()) != null) {
 								String[] values = line.split("\\|");
-								String checkUsername = values[7];
+								String checkUsername = values[8];
 								String checkJMBG = values[4];
 								if (username.equals(checkUsername) || jmbg.equals(checkJMBG)) {
 									notDuplicateUsernameOrJmbg = false;
 									String message = "Username or JMBG is already in use. Please try other credentials or contact support.";
 									String title = "Information Dialog";
-									JOptionPane.showMessageDialog(null, message, title,
-											JOptionPane.INFORMATION_MESSAGE);
+									JOptionPane.showMessageDialog(null, message, title,JOptionPane.INFORMATION_MESSAGE);
 								}
 							}
 							if (notDuplicateUsernameOrJmbg) {
 								try {
-									user = new Turist(name, surname, jmbg, address, username, password);
+									user = new Turist(name, surname, jmbg, address,phoneNumberString, username, password);
 									String unos = user.userInfo();
 									try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
 										writer.write(unos);
@@ -1008,6 +1214,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JTextField addressTextField = new JTextField();
 		JLabel usernameLabel = new JLabel("Username:");
 		JTextField usernameTextField = new JTextField();
+		JLabel phoneNumberLabel = new JLabel("Phone Number");
+		JTextField phoneNumberTextField = new JTextField();
 		JLabel passwordLabel = new JLabel("Password:");
 		JPasswordField passwordField = new JPasswordField();
 		JLabel roleLabel = new JLabel("Role:");
@@ -1022,6 +1230,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		formPanel.add(jmbgTextField);
 		formPanel.add(addressLabel);
 		formPanel.add(addressTextField);
+		formPanel.add(phoneNumberLabel);
+		formPanel.add(phoneNumberTextField);
 		formPanel.add(usernameLabel);
 		formPanel.add(usernameTextField);
 		formPanel.add(passwordLabel);
@@ -1036,12 +1246,13 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String surname = surnameTextField.getText();
 				String jmbg = jmbgTextField.getText();
 				String address = addressTextField.getText();
+				String phoneNumberString = phoneNumberTextField.getText();
 				String username = usernameTextField.getText();
 				String password = new String(passwordField.getPassword());
 				String role = (String) roleComboBox.getSelectedItem();
 				if (validation.IsValidNameSurname(name) && validation.IsValidNameSurname(surname)
 						&& validation.isValidJMBG(jmbg) && validation.isValidAdress(address)
-						&& validation.isValidUsername(username) && validation.IsValidPassword(password)) {
+						&& validation.isValidUsername(username) && validation.isValidPhoneNumber(phoneNumberString) && validation.IsValidPassword(password)) {
 					String filePath = "src/data/userdata.csv";
 					if (role == "Administrator") {
 						mainStructure.Administrator user;
@@ -1050,7 +1261,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 							boolean notDuplicateUsernameOrJmbg = true;
 							while ((line = reader.readLine()) != null) {
 								String[] values = line.split("\\|");
-								String checkUsername = values[7];
+								String checkUsername = values[8];
 								String checkJMBG = values[4];
 								if (username.equals(checkUsername) || jmbg.equals(checkJMBG)) {
 									notDuplicateUsernameOrJmbg = false;
@@ -1061,7 +1272,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 							}
 							if (notDuplicateUsernameOrJmbg) {
 								try {
-									user = new Administrator(name, surname, jmbg, address, username, password);
+									user = new Administrator(name, surname, jmbg, address,phoneNumberString, username, password);
 									String unos = user.userInfo();
 									try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
 										writer.write(unos);
@@ -1109,6 +1320,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JTextField jmbgTextField = new JTextField();
 		JLabel addressLabel = new JLabel("Address:");
 		JTextField addressTextField = new JTextField();
+		JLabel phoneNumberJLabel = new JLabel("Phone Number:");
+		JTextField phoneNumberField = new JTextField();
 		JLabel usernameLabel = new JLabel("Username:");
 		JTextField usernameTextField = new JTextField();
 		JLabel passwordLabel = new JLabel("Password:");
@@ -1125,6 +1338,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		formPanel.add(jmbgTextField);
 		formPanel.add(addressLabel);
 		formPanel.add(addressTextField);
+		formPanel.add(phoneNumberJLabel);
+		formPanel.add(phoneNumberField);
 		formPanel.add(usernameLabel);
 		formPanel.add(usernameTextField);
 		formPanel.add(passwordLabel);
@@ -1139,12 +1354,13 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String surname = surnameTextField.getText();
 				String jmbg = jmbgTextField.getText();
 				String address = addressTextField.getText();
+				String phoneNumberString = phoneNumberField.getText();
 				String username = usernameTextField.getText();
 				String password = new String(passwordField.getPassword());
 				String role = (String) roleComboBox.getSelectedItem();
 				if (validation.IsValidNameSurname(name) && validation.IsValidNameSurname(surname)
 						&& validation.isValidJMBG(jmbg) && validation.isValidAdress(address)
-						&& validation.isValidUsername(username) && validation.IsValidPassword(password)) {
+						&& validation.isValidUsername(username) && validation.isValidPhoneNumber(phoneNumberString) && validation.IsValidPassword(password)) {
 					String filePath = "src/data/userdata.csv";
 					if (role == "Agent") {
 						mainStructure.Agent user;
@@ -1154,7 +1370,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 							boolean notDuplicateUsernameOrJmbg = true;
 							while ((line = reader.readLine()) != null) {
 								String[] values = line.split("\\|");
-								String checkUsername = values[7];
+								String checkUsername = values[8];
 								String checkJMBG = values[4];
 								if (username.equals(checkUsername) || jmbg.equals(checkJMBG)) {
 									notDuplicateUsernameOrJmbg = false;
@@ -1166,7 +1382,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 							}
 							if (notDuplicateUsernameOrJmbg) {
 								try {
-									user = new Agent(name, surname, jmbg, address, username, password);
+									user = new Agent(name, surname, jmbg, address,phoneNumberString, username, password);
 									String unos = user.userInfo();
 									try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
 										writer.write(unos);
@@ -1209,7 +1425,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] valuesOfALine = line.split("\\|");
-				String username = valuesOfALine[7];
+				String username = valuesOfALine[8];
 
 				if (!username.equals(usernameToDelete)) {
 					writer.write(line);
@@ -1242,21 +1458,21 @@ public class AgencijaAdministratorWindow extends JFrame {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] valuesOfALine = line.split("\\|");
-				String username = valuesOfALine[7];
+				String username = valuesOfALine[8];
 
 				if (username.equals(usernameToModify)) {
 
 					String modifiedLine = String.join("|", newData);
 
-					if (newData.length == 5) {
+					if (newData.length == 6) {
 						modifiedLine = valuesOfALine[0] + "|" + valuesOfALine[1] + "|" + newData[0] + "|" + newData[1]
-								+ "|" + newData[2] + "|" + valuesOfALine[5] + "|" + newData[3] + "|" + newData[4] + "|"
-								+ valuesOfALine[8] + "|" + valuesOfALine[9];
+								+ "|" + newData[2] + "|" + valuesOfALine[5] + "|" + newData[3] + "|" + newData[4] +"|"+newData[5]+ "|"
+								+ valuesOfALine[9] + "|" + valuesOfALine[10];
 						writer.write(modifiedLine);
-					} else if (newData.length == 7) {
+					} else if (newData.length == 8) {
 						modifiedLine = valuesOfALine[0] + "|" + valuesOfALine[1] + "|" + newData[0] + "|" + newData[1]
 								+ "|" + newData[2] + "|" + valuesOfALine[5] + "|" + newData[3] + "|" + newData[4] + "|"
-								+ newData[5] + "|" + newData[6];
+								+ newData[5] + "|" + newData[6] +"|"+newData[7];
 						writer.write(modifiedLine);
 					}
 				} else {
@@ -1279,7 +1495,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		}
 	}
 
-	private static void changeUserDataForm(String name, String surname, String jmbg, String address,
+	private static void changeUserDataForm(String name, String surname, String jmbg, String address,String phoneNumber,
 			String tableUsername) {
 
 		JFrame frame = new JFrame("Change User Data");
@@ -1297,6 +1513,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JTextField jmbgTextField = new JTextField();
 		JLabel addressLabel = new JLabel("Address:");
 		JTextField addressTextField = new JTextField();
+		JLabel phoneNumberJLabel = new JLabel("Phone Number:");
+		JTextField phoneNumberField = new JTextField();
 		JLabel usernameLabel = new JLabel("Username:");
 		JTextField usernameTextField = new JTextField();
 		JLabel passwordLabel = new JLabel("Password:");
@@ -1310,6 +1528,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		formPanel.add(jmbgTextField);
 		formPanel.add(addressLabel);
 		formPanel.add(addressTextField);
+		formPanel.add(phoneNumberJLabel);
+		formPanel.add(phoneNumberField);
 		formPanel.add(usernameLabel);
 		formPanel.add(usernameTextField);
 		formPanel.add(passwordLabel);
@@ -1320,6 +1540,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		surnameTextField.setText(surname);
 		jmbgTextField.setText(jmbg);
 		addressTextField.setText(address);
+		phoneNumberField.setText(phoneNumber);
 		usernameTextField.setText(tableUsername);
 
 		submitButton.addActionListener(new ActionListener() {
@@ -1329,11 +1550,12 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String surname = surnameTextField.getText();
 				String jmbg = jmbgTextField.getText();
 				String address = addressTextField.getText();
+				String phoneNumberString = phoneNumberField.getText();
 				String username = usernameTextField.getText();
 				String password = new String(passwordField.getPassword());
 				if (validation.IsValidNameSurname(name) && validation.IsValidNameSurname(surname)
 						&& validation.isValidJMBG(jmbg) && validation.isValidAdress(address)
-						&& validation.isValidUsername(username)) {
+						&& validation.isValidUsername(username) && validation.isValidPhoneNumber(phoneNumberString)) {
 					String unetaSifra = password;
 					String filePath = "src/data/userdata.csv";
 					String tempFilePathString = "src/data/temp.csv";
@@ -1343,14 +1565,14 @@ public class AgencijaAdministratorWindow extends JFrame {
 							byte[] salt = auth.Pbkdf2.generateSalt();
 							byte[] hash = auth.Pbkdf2.getEncryptedPassword(unetaSifra, salt);
 							System.out.println(tableUsername);
-							String[] newLine = { name, surname, jmbg, address, username, auth.Pbkdf2.bytesToHex(hash),
+							String[] newLine = { name, surname, jmbg, address,phoneNumberString, username, auth.Pbkdf2.bytesToHex(hash),
 									auth.Pbkdf2.bytesToHex(salt) };
 							modifyUserData(filePath, tempFilePathString, tableUsername, newLine);
 							System.out.println("Modifying...");
 							frame.setVisible(false);
 						} else {
 							System.out.println(tableUsername);
-							String[] newLine = { name, surname, jmbg, address, username };
+							String[] newLine = { name, surname, jmbg, address,phoneNumberString, username };
 							modifyUserData(filePath, tempFilePathString, tableUsername, newLine);
 							System.out.println("Modifying...");
 							frame.setVisible(false);

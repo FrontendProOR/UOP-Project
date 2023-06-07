@@ -43,6 +43,12 @@ public class validation {
 		return username.matches(expressionString);
 	}
 
+	//validating phone number
+	public static boolean isValidPhoneNumber(String phoneNumber) {
+		String expressionString = "[0-9]{0,14}$";
+		return phoneNumber.matches(expressionString);
+	}
+	
 	// Validating password
 
 	public static boolean IsValidPassword(String password) {

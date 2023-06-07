@@ -10,8 +10,8 @@ import java.security.spec.InvalidKeySpecException;
  */
 public class Agent extends User {
 
-    public Agent(String name, String surname, String JMBG, String address, String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-		super(name, surname, JMBG, address, username, password);
+    public Agent(String name, String surname, String JMBG, String address,String phoneNumberString, String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		super(name, surname, JMBG, address,phoneNumberString, username, password);
 		super.setRole(Role.Agent);
 		// TODO Auto-generated constructor stub
 	}

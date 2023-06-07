@@ -25,8 +25,13 @@ public class AgencijaMain {
 //		System.out.println(kresoAdministrator.getRole()+" "+kresoAdministrator.authenticatePassword("Sifra12345"));
 //		System.out.println(aranzmaniGrckaArrangment.getInfo());
 		
-		Reservation rezervacija = new Reservation("23973286420934","2",8,LocalDateTime.now(),7);
-		System.out.println(rezervacija.getData());
+//		Reservation rezervacija = new Reservation("32423424324","23973286420934","2",8,7);
+//		rezervacija.setId(-2275808568371275128L);
+//		System.out.println(rezervacija.getDateAndTime());
+//		System.out.println(rezervacija.getData());
+//		System.out.println(rezervacija.getId());
+//		System.out.println(rezervacija.getTotalPrice());
+//		System.out.println(rezervacija.getStatus());
 	}
 	
 }

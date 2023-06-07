@@ -1,28 +1,23 @@
 package mainStructure;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
+
+import main.AgencijaAdministratorWindow;
 
 
 public class Reservation {
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
+	LocalDateTime now = LocalDateTime.now();
+	DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(util.Util.DATE_TIME_FORMAT);//dd.MM.yyyy HH:mm
+	String finalDateAndTime = now.format(formatter);
 
 	
 	public Reservation() {
 		long id = new Random().nextLong();
 		this.id = id;
 		this.numPassangers = 1;
-		this.dateAndTime = LocalDateTime.now();
+		this.dateAndTime = finalDateAndTime;
 		this.tripDuration = 0;
 		this.status = Status.Created;
 		this.arrangmentId = "";
@@ -33,16 +28,20 @@ public class Reservation {
 	protected long id;
 	private String arrangmentId;
 	private String sellerId;
-
-	public Reservation(String arrangmentId,String sellerId, int numPassangers, LocalDateTime dateAndTime, int tripDuration) {
+	private double totalPrice;
+	private String turistId;
+     
+	public Reservation(String turistId,String arrangmentId,String sellerId, int numPassangers, int tripDuration) {
 		long id = new Random().nextLong();
 		this.id = id;
 		this.numPassangers = numPassangers;
-		this.dateAndTime = dateAndTime;
+		this.dateAndTime = finalDateAndTime;
 		this.tripDuration = tripDuration;
 		this.status = Status.Created;
 		this.arrangmentId = arrangmentId;
 		this.sellerId = sellerId;
+		this.setTuristId(turistId);
+		AgencijaAdministratorWindow.decrementNumberOfRooms(arrangmentId);
 	}
 
 	public String getData() {
@@ -58,11 +57,11 @@ public class Reservation {
 		this.numPassangers = numPassangers;
 	}
 
-	public LocalDateTime getDateAndTime() {
+	public String getDateAndTime() {
 		return dateAndTime;
 	}
 
-	public void setDateAndTime(LocalDateTime dateAndTime) {
+	public void setDateAndTime(String dateAndTime) {
 		this.dateAndTime = dateAndTime;
 	}
 
@@ -82,12 +81,19 @@ public class Reservation {
 		this.status = status;
 	}
 
+	public long getId() {
+		return id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
+	}
 	
 	private Status status;
 	protected int numPassangers;
 
 	
-	protected LocalDateTime dateAndTime;
+	protected String dateAndTime;
 
 	
 	protected int tripDuration;
@@ -96,50 +102,8 @@ public class Reservation {
 		//
 	}
 	
-	protected void roomTaken(String arrangmentId) {
-		//This function should decrement for arrangment one room after reservation status is completed
-		//decrement in src\data\arrangments.csv
-	}
 	
-	protected double getTotalPrice(long arrangmentRowId) {
-		double totalPrice;
-		String[] allValuesForCalculatingTotalPrice = this.getValuesForCalculations(this.arrangmentId); 
-		int numberOfOvernightStays = Integer.parseInt(allValuesForCalculatingTotalPrice[0]);
-//		int numberOfRooms = Integer.parseInt( allValuesForCalculatingTotalPrice[1]);
-		double unitPrice = Double.parseDouble(allValuesForCalculatingTotalPrice[2]);
-		double fairDiscount = Double.parseDouble(allValuesForCalculatingTotalPrice[3]);
-		totalPrice = (numberOfOvernightStays * unitPrice) * (1 - (fairDiscount / 100));//* numberOfRooms ne ubacuje se jer predstavlja broj slobodnih soba
-		return totalPrice;
-	}
-	
-	protected String[] getValuesForCalculations(String id) {
-	    String csvFile = "src\\data\\arrangments.csv";
-	    String line;
-	    String csvSplitBy = "\\|";
-	    String[] lineStrings = {};
 
-	    try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-	        while ((line = br.readLine()) != null) {
-	            String[] values = line.split(csvSplitBy);
-	                String rowId = values[0];
-	                if (rowId.equals(id)) {
-	                    String numberOfOvernightStays = values[5];
-	                    String numberOfRooms = values[6];
-	                    String unitPrice = values[8];
-	                    String fairDiscount = values[9];
-	                    lineStrings = new String[]{numberOfOvernightStays, numberOfRooms, unitPrice, fairDiscount};
-	                    break; 
-	                }
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-
-	    return lineStrings;
-	}
-
-
-	
 	
 	public String getArrangmentId() {
 		return arrangmentId;
@@ -157,4 +121,21 @@ public class Reservation {
 		this.sellerId = sellerId;
 	}
 
+	public double getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(double totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
+	public String getTuristId() {
+		return turistId;
+	}
+
+	public void setTuristId(String turistId) {
+		this.turistId = turistId;
+	}
+
+	
 }
