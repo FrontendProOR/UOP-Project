@@ -4,7 +4,6 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-//import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -17,6 +16,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
@@ -25,8 +25,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import mainStructure.Reservation;
 import mainStructure.TypeOfAccommodation;
 import mainStructure.TypeOfArrangement;
@@ -94,14 +98,42 @@ public class AgencijaTouristWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1050, 850);
 
-        // Create the main panel with BorderLayout
+        
         JPanel mainPanel = new JPanel(new BorderLayout());
-        getContentPane().add(mainPanel);
 
+        //Here load all data from the turist that just signed in 
+        
+        JPanel topPanel = new JPanel(new GridBagLayout());
+        
+        JPanel buttonJPanel = new JPanel();
+        
+        GridBagConstraints buttonPanelGbc = new GridBagConstraints();
+        buttonPanelGbc.gridx = 0;
+        buttonPanelGbc.gridy = 0;
+        buttonPanelGbc.weightx = 0.2;
+        buttonPanelGbc.weighty = 1.0;
+        buttonPanelGbc.fill = GridBagConstraints.BOTH;
+        topPanel.add(buttonJPanel, buttonPanelGbc);
+
+        JButton button1 = new JButton("My reservations");
+        buttonJPanel.add(button1);
+
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	Long turistIdLong = Long.valueOf(userId);
+                ReservationsFrame reservationsFrame = new ReservationsFrame(turistIdLong);
+                reservationsFrame.setVisible(true);
+            }
+        });
+
+        getContentPane().add(mainPanel);
+        
+        mainPanel.add(buttonJPanel,BorderLayout.WEST);
         // Create the scroll pane
         JScrollPane scrollPane = new JScrollPane();
         mainPanel.add(scrollPane, BorderLayout.CENTER);
-
+        
         // Create the inner panel with GridBagLayout
         JPanel innerPanel = new JPanel(new GridBagLayout());
         scrollPane.setViewportView(innerPanel);

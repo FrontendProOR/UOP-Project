@@ -947,6 +947,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String username = valuesOfALine[0];
 
 				if (!username.equals(IdArrangmentToDelete)) {
+					//Here you need to update deleted last column in arrangments.csv
 					writer.write(line);
 					writer.newLine();
 				}

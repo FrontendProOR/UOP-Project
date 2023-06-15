@@ -7,8 +7,6 @@ import java.lang.Integer;
 
 public abstract class User {
 
-	private String phoneNumber;
-
 	public User(String name, String surname, String JMBG, String address,String phoneNumber, String username, String password)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		byte[][] originalPassword = makeHashPassword(password);
@@ -25,6 +23,7 @@ public abstract class User {
 		this.username = username;
 		this.password = passwordHexString;
 		this.salt = saltHexString;
+		this.deleted = false;
 	}
 
 	public String userInfo() {
@@ -126,12 +125,17 @@ public abstract class User {
 		return gender;
 	}
 
-	/**
-	 * Default constructor
-	 */
 	public User() {
 	}
 
+	protected long getId() {
+		return this.id;
+	}
+	
+	protected void setId(long id) {
+		this.id = id;
+	}
+	
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
@@ -139,12 +143,26 @@ public abstract class User {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	
+	
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
 
 	protected long id;
 
 	protected String name;
 
 	protected String surname;
+
+	private String phoneNumber;
+	
+	public boolean deleted;
 
 	private Role role;
 
