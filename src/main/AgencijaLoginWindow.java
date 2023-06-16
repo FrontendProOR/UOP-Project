@@ -138,7 +138,7 @@ public class AgencijaLoginWindow extends JFrame {
 									adminWindow.setVisible(true);
 									dispose();
 								} else if (role.equals("Agent")) {
-									AgencijaAgentWindow agentWindow = new AgencijaAgentWindow();
+									AgencijaAgentWindow agentWindow = new AgencijaAgentWindow(values[0]);
 									agentWindow.setVisible(true);
 									dispose();
 								} else {

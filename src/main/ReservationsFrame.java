@@ -47,7 +47,7 @@ public class ReservationsFrame extends JFrame {
 		leftPanel.add(button2, gbc);
 
 		JPanel rightPanel = new JPanel(new BorderLayout());
-		String[] tableHeaders = { "ID", "Turist ID", "Seller ID", "Status", "Number of Passengers", "Number of Rooms",
+		String[] tableHeaders = { "ID", "Turist ID", "Seller ID", "Status", "Trip Duration", "Number Of Passengers",
 				"Date" };
 
 		DefaultTableModel tableModel = new DefaultTableModel(tableHeaders, 0);
@@ -110,8 +110,10 @@ public class ReservationsFrame extends JFrame {
 					while ((line = reader.readLine()) != null) {
 						String[] values = line.split("\\|");
 						if (values[0].equals(reservationIdTemp)) {
-							values[3] = mainStructure.Status.Canceled.toString();
-							line = String.join("|", values);
+							if(values[3].equals(mainStructure.Status.Created.toString())) {								
+								values[3] = mainStructure.Status.Canceled.toString();
+								line = String.join("|", values);
+							}//add other statuses if needed 
 						}
 						lines.add(line);
 					}

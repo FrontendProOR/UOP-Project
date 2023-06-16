@@ -128,7 +128,7 @@ public abstract class User {
 	public User() {
 	}
 
-	protected long getId() {
+	public long getId() {
 		return this.id;
 	}
 	

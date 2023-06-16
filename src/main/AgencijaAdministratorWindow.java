@@ -136,7 +136,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String phoneNumberString = (String) tableModelTourist.getValueAt(selectedRowPosition,7 );
 				String usernameString = (String) tableModelTourist.getValueAt(selectedRowPosition, 8);
 				if (usernameString.length() != 0) {
-					changeUserDataForm(nameString, surnameString, jmbgString, addressString,phoneNumberString ,usernameString);
+					changeUserDataForm(selectedRowPosition,nameString, surnameString, jmbgString, addressString,phoneNumberString ,usernameString,tableModelTourist,table);
 				} else {
 					System.out.println("Please choose a user in table by clicking on a user row.");
 				}
@@ -160,7 +160,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton_2 = new JButton("Create Tourist");
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				createTouristForm();
+				createTouristForm(table,tableModelTourist);
 			}
 		});
 		panel_5.add(btnNewButton_2, "cell 0 2,alignx center");
@@ -220,7 +220,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String phoneNumberString = (String)tableModelAdmin.getValueAt(selectedRowPosition, 7); 
 				String usernameString = (String) tableModelAdmin.getValueAt(selectedRowPosition, 8);
 				if (usernameString.length() != 0) {
-					changeUserDataForm(nameString, surnameString, jmbgString, addressString,phoneNumberString, usernameString);
+					changeUserDataForm(selectedRowPosition,nameString, surnameString, jmbgString, addressString,phoneNumberString, usernameString,tableModelAdmin,table1);
 				} else {
 					System.out.println("Please choose a user in table by clicking on a user row.");
 				}
@@ -242,7 +242,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton_5 = new JButton("Create Admin");
 		btnNewButton_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				createAdminForm();
+				createAdminForm(table1,tableModelAdmin);
 			}
 		});
 		panel_6.add(btnNewButton_5, "cell 0 2,alignx center");
@@ -298,7 +298,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 				String phoneNumberString = (String)tableModelAgents.getValueAt(selectedRowPosition,7); 
 				String usernameString = (String) tableModelAgents.getValueAt(selectedRowPosition, 8);
 				if (usernameString.length() != 0) {
-					changeUserDataForm(nameString, surnameString, jmbgString, addressString,phoneNumberString, usernameString);
+					changeUserDataForm(selectedRowPosition,nameString, surnameString, jmbgString, addressString,phoneNumberString, usernameString,tableModelAgents,table2);
 				} else {
 					System.out.println("Please choose a user in table by clicking on a user row.");
 				}
@@ -320,7 +320,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		JButton btnNewButton_7_2 = new JButton("Create Agent");
 		btnNewButton_7_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				createAgentForm();
+				createAgentForm(table2,tableModelAgents);
 			}
 		});
 		panel_7.add(btnNewButton_7_2, "cell 0 2,alignx center");
@@ -1088,7 +1088,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		}
 	}
 
-	private static void createTouristForm() {
+
+	protected static void createTouristForm(JTable table,DefaultTableModel tableModel) {
 
 		JFrame frame = new JFrame("Create Tourist");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -1171,6 +1172,12 @@ public class AgencijaAdministratorWindow extends JFrame {
 										writer.write(unos);
 										writer.newLine();
 										System.out.println("Value written to the CSV file successfully.");
+										
+										String[] lineString = {String.valueOf(user.getId()),user.getRole().toString(),name,surname,jmbg,user.getGender().toString(),address,phoneNumberString,username};
+										tableModel.addRow(lineString);
+										table.setModel(tableModel);
+										
+										
 										reader.close();
 										writer.close();
 										frame.setVisible(false);
@@ -1197,8 +1204,9 @@ public class AgencijaAdministratorWindow extends JFrame {
 		frame.setVisible(true);
 	}
 
-	private static void createAdminForm() {
-		JFrame frame = new JFrame("Create Tourist");
+
+	private static void createAdminForm(JTable table,DefaultTableModel tableModel) {
+		JFrame frame = new JFrame("Create Admin");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(400, 300);
 		frame.getContentPane().setLayout(new BorderLayout());
@@ -1279,6 +1287,11 @@ public class AgencijaAdministratorWindow extends JFrame {
 										writer.write(unos);
 										writer.newLine();
 										System.out.println("Value written to the CSV file successfully.");
+										//////////////////////////
+										String[] lineString = {String.valueOf(user.getId()),user.getRole().toString(),name,surname,jmbg,user.getGender().toString(),address,phoneNumberString,username};
+										tableModel.addRow(lineString);
+										table.setModel(tableModel);
+										/////////////////////////
 										reader.close();
 										writer.close();
 										frame.setVisible(false);
@@ -1305,7 +1318,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		frame.setVisible(true);
 	}
 
-	private static void createAgentForm() {
+	private static void createAgentForm(JTable table,DefaultTableModel tableModel) {
 		JFrame frame = new JFrame("Create Agent");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(400, 300);
@@ -1389,6 +1402,11 @@ public class AgencijaAdministratorWindow extends JFrame {
 										writer.write(unos);
 										writer.newLine();
 										System.out.println("Value written to the CSV file successfully.");
+										////////////////////////////////
+										String[] lineString = {String.valueOf(user.getId()),user.getRole().toString(),name,surname,jmbg,user.getGender().toString(),address,phoneNumberString,username};
+										tableModel.addRow(lineString);
+										table.setModel(tableModel);
+										////////////////////////////
 										reader.close();
 										writer.close();
 										frame.setVisible(false);
@@ -1415,7 +1433,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		frame.setVisible(true);
 	}
 
-	public static void deleteLineByUsername(String usernameToDelete) {
+	protected static void deleteLineByUsername(String usernameToDelete) {
 		String csvFile = "src/data/userdata.csv";
 		String tempFile = "src/data/temp.csv";
 
@@ -1496,8 +1514,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		}
 	}
 
-	private static void changeUserDataForm(String name, String surname, String jmbg, String address,String phoneNumber,
-			String tableUsername) {
+	protected static void changeUserDataForm(int rowPosition,String name, String surname, String jmbg, String address,String phoneNumber,
+			String tableUsername,DefaultTableModel tableModel,JTable table) {
 
 		JFrame frame = new JFrame("Change User Data");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -1562,6 +1580,9 @@ public class AgencijaAdministratorWindow extends JFrame {
 					String tempFilePathString = "src/data/temp.csv";
 
 					try {
+						String idString = tableModel.getValueAt(rowPosition, 0).toString();
+						String roleString = tableModel.getValueAt(rowPosition, 1).toString();
+						String genderString = tableModel.getValueAt(rowPosition, 5).toString();
 						if (unetaSifra.length() != 0) {
 							byte[] salt = auth.Pbkdf2.generateSalt();
 							byte[] hash = auth.Pbkdf2.getEncryptedPassword(unetaSifra, salt);
@@ -1569,13 +1590,19 @@ public class AgencijaAdministratorWindow extends JFrame {
 							String[] newLine = { name, surname, jmbg, address,phoneNumberString, username, auth.Pbkdf2.bytesToHex(hash),
 									auth.Pbkdf2.bytesToHex(salt) };
 							modifyUserData(filePath, tempFilePathString, tableUsername, newLine);
-							System.out.println("Modifying...");
+							tableModel.removeRow(rowPosition);
+							String[] lineString = {name,surname,jmbg,address,phoneNumberString,username};
+							tableModel.addRow(lineString);
+							table.setModel(tableModel);
 							frame.setVisible(false);
 						} else {
 							System.out.println(tableUsername);
 							String[] newLine = { name, surname, jmbg, address,phoneNumberString, username };
 							modifyUserData(filePath, tempFilePathString, tableUsername, newLine);
-							System.out.println("Modifying...");
+							tableModel.removeRow(rowPosition);
+							String[] lineString = {idString,roleString,name,surname,jmbg,genderString,address,phoneNumberString,username};
+							tableModel.addRow(lineString);
+							table.setModel(tableModel);
 							frame.setVisible(false);
 						}
 					} catch (NoSuchAlgorithmException e1) {

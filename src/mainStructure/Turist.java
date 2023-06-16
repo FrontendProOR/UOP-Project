@@ -66,7 +66,7 @@ public class Turist extends User {
 		super.setId(idToSet);
 	}
 
-	protected long getId() {
+	public long getId() {
 		return super.getId();
 	}
 	protected Role role = Role.Turist;

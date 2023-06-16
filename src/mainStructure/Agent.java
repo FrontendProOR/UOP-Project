@@ -25,6 +25,7 @@ public class Agent extends User {
 
 	
     public Agent() {
+    	
     }
 
     
@@ -51,7 +52,7 @@ public class Agent extends User {
     }
 
     
-    protected long getId() {
+    public long getId() {
     	return super.getId();
     }
     

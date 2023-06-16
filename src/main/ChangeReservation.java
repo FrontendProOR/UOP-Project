@@ -51,11 +51,13 @@ public class ChangeReservation {
 					while ((line = reader.readLine()) != null) {
 						String[] values = line.split("\\|");
 						if (values[0].equals(reservationIdTemp)) {
-							values[5] = numOfPassengers;
-							values[4] = tripDuration;
-							table.setValueAt(numOfPassengers, selectedRowIndex, 5);
-							table.setValueAt(tripDuration, selectedRowIndex, 4);
-							line = String.join("|", values);
+							if(values[3].equals(mainStructure.Status.Created.toString())) {								
+								values[5] = numOfPassengers;
+								values[4] = tripDuration;
+								table.setValueAt(numOfPassengers, selectedRowIndex, 5);
+								table.setValueAt(tripDuration, selectedRowIndex, 4);
+								line = String.join("|", values);
+							}
 						}
 
 						lines.add(line);
