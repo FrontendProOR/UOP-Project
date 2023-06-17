@@ -165,8 +165,8 @@ public class AgencijaAdministratorWindow extends JFrame {
 		});
 		panel_5.add(btnNewButton_2, "cell 0 2,alignx center");
 
-		JButton btnNewButton_3 = new JButton("Add Tourist (Agent requested)");
-		panel_5.add(btnNewButton_3, "cell 0 3");
+//		JButton btnNewButton_3 = new JButton("Add Tourist (Agent requested)");
+//		panel_5.add(btnNewButton_3, "cell 0 3");
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		panel.add(scrollPane, "cell 0 0, grow");
@@ -366,20 +366,14 @@ public class AgencijaAdministratorWindow extends JFrame {
 
 		JPanel buttonsPanel22 = new JPanel(new MigLayout("fill"));
 		JButton btn1 = new JButton("Add Arrangment");
-		btn1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				createArrangmentForm();
-
-			}
-		});
 		JButton btn2 = new JButton("Edit Arrangment");
 		JButton btn3 = new JButton("Delete Arrangment");
 
-		JButton btn4 = new JButton("Approve Agent Arrangment");
+//		JButton btn4 = new JButton("Approve Agent Arrangment");
 		buttonsPanel22.add(btn1, "alignx right,wrap");
 		buttonsPanel22.add(btn2, "alignx right,wrap");
 		buttonsPanel22.add(btn3, "alignx right,wrap");
-		buttonsPanel22.add(btn4, "alignx right,wrap");
+//		buttonsPanel22.add(btn4, "alignx right,wrap");
 		panel_3.add(buttonsPanel22, "cell 1 0 1 2, grow");
 
 		String[] tableModel4 = { "ID", "SellerID", "Type Arrangment", "Image", "Available Date",
@@ -406,12 +400,20 @@ public class AgencijaAdministratorWindow extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		btn1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int selectedRowId = table5.getSelectedRow();
+				createArrangmentForm(selectedRowId,table5,tableModelArrangments);
+				
+			}
+		});
+		
 		btn2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowOfSelectedArrangmentID = table5.getSelectedRow();
 				if (rowOfSelectedArrangmentID != -1) {
 					int selectedArrangmentID = (int) rowOfSelectedArrangmentID;
-					changeArrangmentData(selectedArrangmentID);
+					changeArrangmentData(selectedArrangmentID,table5,tableModelArrangments);
 				}
 			}
 		});
@@ -486,10 +488,10 @@ public class AgencijaAdministratorWindow extends JFrame {
         deleteReservationButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, deleteReservationButton.getPreferredSize().height));
         leftPanelReservation.add(deleteReservationButton);
 
-        String[] columnNamesReservations = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time"};
+        String[] columnNamesReservations = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID"};
         DefaultTableModel tableModelReservation = new DefaultTableModel(columnNamesReservations, 0);
         JTable reservationTable = new JTable(tableModelReservation);
-
+        
         approveReservationButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		int selectedReservationRow = reservationTable.getSelectedRow();
@@ -519,7 +521,8 @@ public class AgencijaAdministratorWindow extends JFrame {
         panel_4.add(scrollReservationPane, BorderLayout.CENTER);
 		
         String filePath = "src/data/reservations.csv";
-        loadReservationData(filePath,reservationTable);
+        List<String> emptyList = new ArrayList<>();
+        loadReservationData(filePath,reservationTable,emptyList,true,-1L);
 	}
 	
 	public static void incrementNumberOfRooms(String arrangementId) {
@@ -725,14 +728,20 @@ public class AgencijaAdministratorWindow extends JFrame {
 	    }
 	}
 
-	private void loadReservationData(String filePath,JTable reservationTable) {
+	protected static void loadReservationData(String filePath,JTable reservationTable,List<String> turistReservationsList,boolean isAdmin,long userId) {
         DefaultTableModel tableModel = (DefaultTableModel) reservationTable.getModel();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split("\\|");
-                tableModel.addRow(data);
+                if(isAdmin == true){                	
+                	tableModel.addRow(data);
+                }else if(turistReservationsList.contains(data[0])) {
+                	tableModel.addRow(data);
+                }else if(data[2].equals(Long.toString(userId))) {
+                	tableModel.addRow(data);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -767,23 +776,23 @@ public class AgencijaAdministratorWindow extends JFrame {
 		return rowData;
 	}
 
-	public static TypeOfAccommodation getTypeOfAccommodation(int ordinal) {
-		if (ordinal >= 0 && ordinal < TypeOfAccommodation.values().length) {
-			return TypeOfAccommodation.values()[ordinal];
-		} else {
+//	public static TypeOfAccommodation getTypeOfAccommodation(int ordinal) {
+//		if (ordinal >= 0 && ordinal < TypeOfAccommodation.values().length) {
+//			return TypeOfAccommodation.values()[ordinal];
+//		} else {
+//
+//			return null;
+//		}
+//	}
 
-			return null;
-		}
-	}
-
-	public static TypeOfArrangement getTypeOfArrangment(int ordinal) {
-		if (ordinal >= 0 && ordinal < TypeOfArrangement.values().length) {
-			return TypeOfArrangement.values()[ordinal];
-		} else {
-
-			return null;
-		}
-	}
+//	public static TypeOfArrangement getTypeOfArrangment(int ordinal) {
+//		if (ordinal >= 0 && ordinal < TypeOfArrangement.values().length) {
+//			return TypeOfArrangement.values()[ordinal];
+//		} else {
+//
+//			return null;
+//		}
+//	}
 
 	private static String formatDate(JDatePicker datePicker, Object date) {
 		if (date != null) {
@@ -801,7 +810,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		return "";
 	}
 
-	public static void changeArrangmentData(int selectedRowID) {
+	public static void changeArrangmentData(int selectedRowID,JTable tableOfArrangments,DefaultTableModel tableModelOfArrangment) {
 		JFrame frame = new JFrame("Arrangement Form");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(650, 700);
@@ -845,11 +854,11 @@ public class AgencijaAdministratorWindow extends JFrame {
 			idTextField.setText(rowData[0]);
 			sellerTextField.setText(rowData[1]);
 			pictureTextField.setText(rowData[3]);
-			int ordinalAccomodation = Integer.parseInt(rowData[7]);
-			accomodationBox.setSelectedItem(getTypeOfAccommodation(ordinalAccomodation));
+//			int ordinalAccomodation = Integer.parseInt(rowData[7]);
+			accomodationBox.setSelectedItem(rowData[7]);
 
-			int ordinalArrangment = Integer.parseInt(rowData[2]);
-			arrangmentBox.setSelectedItem(getTypeOfArrangment(ordinalArrangment));
+//			int ordinalArrangment = Integer.parseInt(rowData[2]);
+			arrangmentBox.setSelectedItem(rowData[2]);
 			String dayString = rowData[4].substring(0, 2);
 			int day = Integer.parseInt(dayString);
 			String monthString = rowData[4].substring(3, 5);
@@ -905,12 +914,29 @@ public class AgencijaAdministratorWindow extends JFrame {
 
 						if (i == selectedRowID) {
 							String newData = idTextField.getText() + "|" + sellerTextField.getText() + "|"
-									+ arrangmentBox.getSelectedIndex() + "|" + pictureTextField.getText() + "|"
+									+ arrangmentBox.getSelectedItem().toString() + "|" + pictureTextField.getText() + "|"
 									+ formatDate(datePicker, datePicker.getModel().getValue()) + "|"
 									+ numberOfOvernightStaysTextField.getText() + "|" + numberOfRoomsTextField.getText()
-									+ "|" + accomodationBox.getSelectedIndex() + "|" + priceTextField.getText() + "|"
+									+ "|" + accomodationBox.getSelectedItem().toString() + "|" + priceTextField.getText() + "|"
 									+ fairDiscountTextField.getText() + "|" + deleted;
 
+							
+							
+							
+							
+							
+							SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
+							GregorianCalendar cal = new GregorianCalendar();
+							String datum = format.format(datePicker.getModel().getValue());
+							cal.setTime(format.parse(datum));
+							String formattedDate = format.format(cal.getTime());
+							
+							
+							
+							String[] inputStrings = {idTextField.getText(),sellerTextField.getText(),arrangmentBox.getSelectedItem().toString(),pictureTextField.getText(),formattedDate,numberOfOvernightStaysTextField.getText(),numberOfRoomsTextField.getText(),accomodationBox.getSelectedItem().toString(),priceTextField.getText(),fairDiscountTextField.getText()};
+							tableModelOfArrangment.addRow(inputStrings);
+							tableModelOfArrangment.removeRow(selectedRowID);
+							tableOfArrangments.setModel(tableModelOfArrangment);
 							csvData.append(newData).append("\n");
 							frame.dispose();
 						} else {
@@ -922,6 +948,9 @@ public class AgencijaAdministratorWindow extends JFrame {
 					Files.write(Paths.get("src\\data\\arrangments.csv"), csvData.toString().getBytes());
 				} catch (IOException e2) {
 					e2.printStackTrace();
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			}
 		});
@@ -970,7 +999,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 		}
 	}
 
-	private static void createArrangmentForm() {
+	protected static void createArrangmentForm(int selectedIdRowArrangment,JTable tableOfArrangments,DefaultTableModel tableModelOfArrangment) {
 		JFrame frame = new JFrame("Arrangement Form");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(650, 700);
@@ -1055,6 +1084,21 @@ public class AgencijaAdministratorWindow extends JFrame {
 							&& validation.isNumeric(numberOfRoomsTextField.getText())
 							&& validation.isNumeric(priceTextField.getText())
 							&& validation.isNumeric(fairDiscountTextField.getText())) {
+						//update table with ordinal and with values
+//						String accomodationType = accomodationBox.getSelectedItem().toString();
+//						TypeOfAccommodation enumValue = mainStructure.TypeOfAccommodation.valueOf(accomodationType);
+//				        int ordinalValueOfAccomodation = enumValue.ordinal(); 
+//						String accomodationTypeString = String.valueOf(ordinalValueOfAccomodation);
+//						
+//						TypeOfArrangement enumValue1 = mainStructure.TypeOfArrangement.valueOf(arrangmentBox.getSelectedItem().toString());
+//						int ordinalValueOfArrangment = enumValue1.ordinal();
+//						String arrangmentTypeOrdinalString = String.valueOf(ordinalValueOfArrangment);
+//						
+						String[] inputStrings = {idTextField.getText(),sellerTextField.getText(),arrangmentBox.getSelectedItem().toString(),pictureTextField.getText(),formattedDate,numberOfOvernightStaysTextField.getText(),numberOfRoomsTextField.getText(),accomodationBox.getSelectedItem().toString(),priceTextField.getText(),fairDiscountTextField.getText()};
+						tableModelOfArrangment.addRow(inputStrings);
+						
+						tableOfArrangments.setModel(tableModelOfArrangment);
+						
 						handleCreateArrangement(arrangmentInfoLineString);
 						frame.dispose();
 					} else {

@@ -26,8 +26,8 @@ public class Arrangment {
 	private String numberOfOvernightStays;
 
 	public Arrangment() {
-		this.id = 0;
-		this.sellerID = 0;
+		this.id = new Random().nextLong();
+		this.sellerID = 8800862720627335799L;
 		this.typeOfArrangment = TypeOfArrangement.LongJourneys;
 		this.picture = "";
 		this.numberOfOvernightStays = "0";
@@ -84,7 +84,7 @@ public class Arrangment {
 	}
 
 	public String getInfo() {
-		return this.id+"|"+this.sellerID+"|"+this.typeOfArrangment.ordinal()+"|"+this.picture+"|"+this.availableDate+"|"+this.numberOfOvernightStays+"|"+this.numberOfRooms+"|"+this.accomodation.ordinal()+"|"+this.unitPrice+"|"+this.fairDiscount+"|"+this.deleted;
+		return this.id+"|"+this.sellerID+"|"+this.typeOfArrangment+"|"+this.picture+"|"+this.availableDate+"|"+this.numberOfOvernightStays+"|"+this.numberOfRooms+"|"+this.accomodation+"|"+this.unitPrice+"|"+this.fairDiscount+"|"+this.deleted;
 	}
 	
 	public String getUnitPrice() {

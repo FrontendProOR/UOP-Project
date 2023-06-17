@@ -40,13 +40,13 @@ public class Reservation {
 		this.status = Status.Created;
 		this.arrangmentId = arrangmentId;
 		this.sellerId = sellerId;
-		this.setTuristId(turistId);
+		this.setTuristId(turistId);///////////////////////////
 		AgencijaAdministratorWindow.decrementNumberOfRooms(arrangmentId);
 	}
 
 	public String getData() {
 		return this.getId() + "|" + this.getArrangmentId() + "|" +  this.getSellerId() + "|" + this.getStatus() + "|"
-				+ this.getTripDuration() + "|" + this.getNumPassangers()  + "|" + this.getDateAndTime();
+				+ this.getTripDuration() + "|" + this.getNumPassangers()  + "|" + this.getDateAndTime()+"|"+this.turistId;
 	}
 
 	public int getNumPassangers() {

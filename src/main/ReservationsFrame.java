@@ -26,7 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import mainStructure.Turist;
 
 public class ReservationsFrame extends JFrame {
-	public ReservationsFrame(long turistId) {
+	public ReservationsFrame(long turistId,boolean isTurist) {
 		setTitle("Reservations");
 		setSize(800, 600);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -47,61 +47,42 @@ public class ReservationsFrame extends JFrame {
 		leftPanel.add(button2, gbc);
 
 		JPanel rightPanel = new JPanel(new BorderLayout());
-		String[] tableHeaders = { "ID", "Turist ID", "Seller ID", "Status", "Trip Duration", "Number Of Passengers",
-				"Date" };
 
-		DefaultTableModel tableModel = new DefaultTableModel(tableHeaders, 0);
 
-		JTable table = new JTable(tableModel);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		String[][] allReservations = new String[0][7];
-		String csvFile = "src/data/reservations.csv";
-		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
-			String line;
-			int i = 0;
-			Turist turista = new Turist();
-			turista.updateListOfReservations(turistId);
-			List<String> turistDataString = turista.getListOfReservations();
+		Turist turista = new Turist();
+		turista.updateListOfReservations(turistId);
+		List<String> turistDataString = turista.getListOfReservations();
+//		System.out.println(turistDataString);
 
-			while ((line = reader.readLine()) != null) {
-				String[] valueOfReservation = line.split("\\|");
-				if (turistDataString.contains(valueOfReservation[0])) {
-
-					String[] reservationsStrings = { valueOfReservation[0], valueOfReservation[1],
-							valueOfReservation[2], valueOfReservation[3], valueOfReservation[4], valueOfReservation[5],
-							valueOfReservation[6] };
-
-					allReservations = Arrays.copyOf(allReservations, allReservations.length + 1);
-					allReservations[i] = reservationsStrings;
-					tableModel.addRow(reservationsStrings);
-					i++;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		table.setModel(tableModel);
-		table.setVisible(true);
-
+		String[] tableHeaders = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID"};
+        DefaultTableModel tableModel = new DefaultTableModel(tableHeaders, 0);
+        JTable reservationTable = new JTable(tableModel);
+        String filePath = "src/data/reservations.csv";
+        if(isTurist == true) {
+        	main.AgencijaAdministratorWindow.loadReservationData(filePath,reservationTable,turistDataString,false,-1L);        	
+        }else {
+        	main.AgencijaAdministratorWindow.loadReservationData(filePath,reservationTable,turistDataString,true,-1L);///////////////////////////////////here -1L is just to avoid method overloading and making more methods
+        }
+		
 		button1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Here is change reservation button
-				int selectedReservationRow = table.getSelectedRow();
+				int selectedReservationRow = reservationTable.getSelectedRow();
 				long selectedReservationId = Long
 						.parseLong(tableModel.getValueAt(selectedReservationRow, 0).toString());
 				ChangeReservation reservationFrame = new ChangeReservation();
-				reservationFrame.createChangeReservationFrame1(selectedReservationId, table);
+				reservationFrame.createChangeReservationFrame1(selectedReservationId, reservationTable);
 
 			}
 		});
 
+		
 		button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int selectedRowIndex = table.getSelectedRow();
-				String reservationIdTemp = table.getValueAt(selectedRowIndex, 0).toString();
-				table.setValueAt(mainStructure.Status.Canceled.toString(), selectedRowIndex, 3);
+				int selectedRowIndex = reservationTable.getSelectedRow();
+				String reservationIdTemp = reservationTable.getValueAt(selectedRowIndex, 0).toString();
 				
 				String csvFile = "src\\data\\reservations.csv";
 				try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
@@ -110,9 +91,10 @@ public class ReservationsFrame extends JFrame {
 					while ((line = reader.readLine()) != null) {
 						String[] values = line.split("\\|");
 						if (values[0].equals(reservationIdTemp)) {
-							if(values[3].equals(mainStructure.Status.Created.toString())) {								
+							if(values[3].equals(mainStructure.Status.Created.toString())) {																
+								reservationTable.setValueAt(mainStructure.Status.Canceled.toString(), selectedRowIndex, 3);
 								values[3] = mainStructure.Status.Canceled.toString();
-								line = String.join("|", values);
+								line = String.join("|", values);						
 							}//add other statuses if needed 
 						}
 						lines.add(line);
@@ -132,7 +114,7 @@ public class ReservationsFrame extends JFrame {
 			}
 		});
 
-		JScrollPane scrollPane = new JScrollPane(table);
+		JScrollPane scrollPane = new JScrollPane(reservationTable);
 		rightPanel.add(scrollPane, BorderLayout.CENTER);
 
 		mainPanel.add(leftPanel, BorderLayout.WEST);

@@ -41,7 +41,7 @@ public class Turist extends User {
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             while ((line = br.readLine()) != null) {
                 String[] reservationData = line.split(cvsSplitBy);
-                if (reservationData[1].equals(turistIdString)){ 
+                if (reservationData[7].equals(turistIdString)){ 
                 	
                 	String reservationString = reservationData[0];
                 	listOfReservations.add(reservationString);

@@ -1,23 +1,37 @@
 package main;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
+
 import main.AgencijaAdministratorWindow;
+import mainStructure.Reservation;
+import mainStructure.Status;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
@@ -217,18 +231,46 @@ public class AgencijaAgentWindow extends JFrame {
         
         tableArrangements.setModel(tableModelArrangements);
 
+        createArrangementButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int rowOfSelectedArrangmentID = tableArrangements.getSelectedRow();
+				main.AgencijaAdministratorWindow.createArrangmentForm(rowOfSelectedArrangmentID,tableArrangements,tableModelArrangements);
+			}
+		});
+        editArrangementButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int rowOfSelectedArrangmentID = tableArrangements.getSelectedRow();
+				if (rowOfSelectedArrangmentID != -1) {
+					int selectedArrangmentID = (int) rowOfSelectedArrangmentID;
+					main.AgencijaAdministratorWindow.changeArrangmentData(selectedArrangmentID,tableArrangements,tableModelArrangements);
+				}
+			}
+		});
+
+		deleteArrangementButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int rowOfSelectedArrangmentID = tableArrangements.getSelectedRow();
+				if (rowOfSelectedArrangmentID != -1) {
+					String selectedArrangmentID = (String) tableArrangements.getValueAt(rowOfSelectedArrangmentID, 0);
+					main.AgencijaAdministratorWindow.deleteLineArrangment(selectedArrangmentID);
+					tableModelArrangements.removeRow(rowOfSelectedArrangmentID);
+				}
+			}
+		});
+        
+        
+        
         JScrollPane scrollPaneArrangements = new JScrollPane(tableArrangements);
         scrollPaneArrangements.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         arrangementsPanel.add(scrollPaneArrangements, BorderLayout.CENTER);
         tabbedPane.addTab("Arrangements", arrangementsPanel);
         //////////////////////////////////////////////////////////////////////////
+        JPanel reservationsJPanel = new JPanel();
+        reservationsJPanel.setLayout(new BorderLayout());
         
-        
-        JPanel reportsAndStatsPanel = new JPanel();
-        reportsAndStatsPanel.setLayout(new BorderLayout());
-        JPanel reportAndStatsButtonPanel = new JPanel();
-        reportAndStatsButtonPanel.setLayout(new GridBagLayout());
+        JPanel reservationsButtonPanel = new JPanel();
+        reservationsButtonPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc3 = new GridBagConstraints();
         gbc3.anchor = GridBagConstraints.NORTHWEST;
         gbc3.gridx = 0;
@@ -236,13 +278,88 @@ public class AgencijaAgentWindow extends JFrame {
         gbc3.weightx = 1.0;
         gbc3.weighty = 1.0;
         gbc3.fill = GridBagConstraints.HORIZONTAL;
-
-        JButton showReportButton = new JButton("Show Report");
-        reportAndStatsButtonPanel.add(showReportButton, gbc3);
+        
+        JButton makeReservationButton = new JButton("Make Reservation");
+        reservationsButtonPanel.add(makeReservationButton, gbc3);
         
         gbc3.gridy = 1;
+        JButton changeReservationButton = new JButton("Change Reservation");
+        reservationsButtonPanel.add(changeReservationButton, gbc3);
+    
+        gbc3.gridy = 2;
+        JButton cancelReservationButton = new JButton("Cancel Reservation");
+        reservationsButtonPanel.add(cancelReservationButton, gbc3);
+        
+        gbc3.gridy = 3;
+        JButton approveReservationButton = new JButton("Approve Reservation");
+        reservationsButtonPanel.add(approveReservationButton, gbc3);
+        
+        reservationsJPanel.add(reservationsButtonPanel,BorderLayout.WEST);
+        
+        
+        String filePath = "src/data/reservations.csv";
+        List<String> emptyList = new ArrayList<>();
+        String[] columnNamesReservations = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID"};
+        DefaultTableModel tableModelReservation = new DefaultTableModel(columnNamesReservations, 0);
+        JTable reservationTable = new JTable(tableModelReservation);
+        main.AgencijaAdministratorWindow.loadReservationData(filePath,reservationTable,emptyList,false,agentIdLong);//Here loading the reservations for agent only
+        
+        makeReservationButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		makeReservationForm(reservationTable,tableModelReservation);
+        	}
+        });
+        changeReservationButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		int selectedReservationRow = reservationTable.getSelectedRow();
+        		changeReservationForm(selectedReservationRow,reservationTable,tableModelReservation);
+        	}
+        });
+        cancelReservationButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        	int selectedReservationRow = reservationTable.getSelectedRow();
+        	long reservationId = Long.parseLong(tableModelReservation.getValueAt(selectedReservationRow, 0).toString());
+        	cancelReservationFunction(reservationId,reservationTable,tableModelReservation);
+        	}
+        });
+        approveReservationButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		int selectedReservationRow = reservationTable.getSelectedRow();
+            	long reservationId = Long.parseLong(tableModelReservation.getValueAt(selectedReservationRow, 0).toString());
+        		approveReservationFunction(reservationId, reservationTable, tableModelReservation);
+        	}
+        });
+        
+        JScrollPane scrollPaneReservations = new JScrollPane(reservationTable);
+        scrollPaneReservations.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		  
+        reservationsJPanel.add(scrollPaneReservations, BorderLayout.CENTER);
+        
+        tabbedPane.addTab("Tourists Reservations",reservationsJPanel );
+        /////////////////////////////////////////////////////////////////////////
+        
+        JPanel reportsAndStatsPanel = new JPanel();
+        reportsAndStatsPanel.setLayout(new BorderLayout());
+        JPanel reportAndStatsButtonPanel = new JPanel();
+        reportAndStatsButtonPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc4 = new GridBagConstraints();
+        gbc4.anchor = GridBagConstraints.NORTHWEST;
+        gbc4.gridx = 0;
+        gbc4.gridy = 0;
+        gbc4.weightx = 1.0;
+        gbc4.weighty = 1.0;
+        gbc4.fill = GridBagConstraints.HORIZONTAL;
+
+        JButton showReportButton = new JButton("Show Report");
+        reportAndStatsButtonPanel.add(showReportButton, gbc4);
+        
+        gbc4.gridy = 1;
         JButton getTotalProfitButton = new JButton("Show Total Profit");
-        reportAndStatsButtonPanel.add(getTotalProfitButton,gbc3);
+        reportAndStatsButtonPanel.add(getTotalProfitButton,gbc4);
         reportsAndStatsPanel.add(reportAndStatsButtonPanel,BorderLayout.WEST);
         
         JPanel reportJPanel = new JPanel();
@@ -254,6 +371,225 @@ public class AgencijaAgentWindow extends JFrame {
         
         tabbedPane.addTab("Reports And Stats", reportsAndStatsPanel);
         
+        //////////////////////////////////////////////////////////////////////////
+        
+        
         contentPane.add(tabbedPane, BorderLayout.CENTER);
     }
+    private static void makeReservationForm(JTable table,DefaultTableModel tableModel) {
+        JFrame frame = new JFrame("Form Frame");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel panel = new JPanel(new GridLayout(9, 2, 10, 10));
+
+        List<String> formData = new ArrayList<String>();
+        
+        String[] labels = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time", "Tourist ID"};
+
+        for (String label : labels) {
+            JLabel jLabel = new JLabel(label);
+            JTextField jTextField = new JTextField(20);
+            panel.add(jLabel);
+            panel.add(jTextField);
+        }
+
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                formData.clear();
+                Component[] components = panel.getComponents();
+                for (Component component : components) {
+                    if (component instanceof JTextField) {
+                        JTextField textField = (JTextField) component;
+                        formData.add(textField.getText());
+                    }
+                }
+                Reservation reservation = new Reservation(formData.get(7),formData.get(1),formData.get(2),Integer.parseInt(formData.get(5)), Integer.parseInt(formData.get(4)));
+                String lineString = reservation.getData();
+                writeReservation(lineString);
+                String[] newRowStrings = new String[formData.size()]; 
+
+                for (int i = 0; i < formData.size(); i++) {
+                    newRowStrings[i] = formData.get(i); 
+                }
+                tableModel.addRow(newRowStrings);
+//                table.setModel(tableModel);
+            }
+        });
+
+        panel.add(submitButton);
+
+        frame.getContentPane().add(panel, BorderLayout.CENTER);
+        frame.pack();
+        frame.setVisible(true);
+    }
+    public static void writeReservation(String reservationLine) {
+        String csvFile = "src\\data\\reservations.csv";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile, true))) {
+            writer.write(reservationLine);
+            writer.newLine();
+            System.out.println("Reservation written to CSV file successfully.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the CSV file: " + e.getMessage());
+        }
+    }
+    public void changeReservationForm(int selectedRow, JTable table, DefaultTableModel tableModel) {
+        JFrame frame = new JFrame("Form Frame");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel panel = new JPanel(new GridLayout(9, 2, 10, 10));
+
+        List<JTextField> textFields = new ArrayList<>();
+        String[] labels = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time", "Tourist ID"};
+
+        
+        Object[] rowData = new Object[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            rowData[i] = table.getValueAt(selectedRow, i);
+        }
+
+        for (int i = 0; i < labels.length; i++) {
+            JLabel jLabel = new JLabel(labels[i]);
+            JTextField jTextField = new JTextField(rowData[i].toString(), 20); 
+            panel.add(jLabel);
+            panel.add(jTextField);
+            textFields.add(jTextField);
+        }
+        
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String[] formData = new String[textFields.size()];
+                for (int i = 0; i < textFields.size(); i++) {
+                    formData[i] = textFields.get(i).getText();
+                }
+                
+                Reservation reservation = new Reservation(formData[7], formData[1], formData[2], Integer.parseInt(formData[5]), Integer.parseInt(formData[4]));
+                reservation.setStatus(Status.Completed);
+                String newLine = reservation.getData();
+                String reservationId = formData[0].toString();
+                
+                String[] newTableRowData = newLine.split("\\|");
+                formData[0] = newTableRowData[0];
+                formData[6] = newTableRowData[6];
+                modifyReservationLine(reservationId,newLine, "src\\data\\reservations.csv");
+
+                tableModel.removeRow(selectedRow);
+                tableModel.addRow(formData);
+                table.setModel(tableModel);
+                frame.dispose();
+            }
+        });
+
+
+        panel.add(submitButton);
+        frame.getContentPane().add(panel);
+        frame.pack();
+        frame.setVisible(true);
+    }
+    public void modifyReservationLine(String reservationId, String newLine, String filePath) {
+        try {
+            File file = new File(filePath);
+            File tempFile = new File("temp.csv");
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] lineStrings = line.split("\\|");
+                if (lineStrings.length > 0 && lineStrings[0].equals(reservationId)) {
+                    writer.write(newLine);
+                    writer.newLine();
+                } else {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+
+            reader.close();
+            writer.close();
+
+            if (file.delete()) {
+                if (!tempFile.renameTo(file)) {
+                    throw new IOException("Failed to rename temporary file to the original file");
+                }
+            } else {
+                throw new IOException("Failed to delete the original file");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    protected void cancelReservationFunction(long reservationId,JTable table,DefaultTableModel tableModel) {
+    	int selectedRowIndex = table.getSelectedRow();
+		String reservationIdTemp = table.getValueAt(selectedRowIndex, 0).toString();
+		
+		String csvFile = "src\\data\\reservations.csv";
+		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+			List<String> lines = new ArrayList<>();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] values = line.split("\\|");
+				if (values[0].equals(reservationIdTemp)) {
+					if(values[3].equals(mainStructure.Status.Created.toString())) {																
+						table.setValueAt(mainStructure.Status.Failed.toString(), selectedRowIndex, 3);
+						values[3] = mainStructure.Status.Failed.toString();
+						line = String.join("|", values);						
+					}
+				}
+				lines.add(line);
+			}
+			tableModel.setValueAt(Status.Failed.toString(), selectedRowIndex, 3);
+			table.setModel(tableModel);
+			
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
+				for (String modifiedLine : lines) {
+					writer.write(modifiedLine);
+					writer.newLine();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+    }
+    protected void approveReservationFunction(long reservationId,JTable table,DefaultTableModel tableModel) {
+    	int selectedRowIndex = table.getSelectedRow();
+		String reservationIdTemp = table.getValueAt(selectedRowIndex, 0).toString();
+		
+		String csvFile = "src\\data\\reservations.csv";
+		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+			List<String> lines = new ArrayList<>();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] values = line.split("\\|");
+				if (values[0].equals(reservationIdTemp)) {
+					if(values[3].equals(mainStructure.Status.Created.toString())) {																
+						table.setValueAt(mainStructure.Status.Completed.toString(), selectedRowIndex, 3);
+						values[3] = mainStructure.Status.Completed.toString();
+						line = String.join("|", values);						
+					}
+				}
+				lines.add(line);
+			}
+			tableModel.setValueAt(Status.Completed.toString(), selectedRowIndex, 3);
+			table.setModel(tableModel);
+			
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
+				for (String modifiedLine : lines) {
+					writer.write(modifiedLine);
+					writer.newLine();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+    }
+
 }

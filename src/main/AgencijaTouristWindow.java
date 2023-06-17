@@ -34,6 +34,7 @@ import javax.swing.table.DefaultTableModel;
 import mainStructure.Reservation;
 import mainStructure.TypeOfAccommodation;
 import mainStructure.TypeOfArrangement;
+import validation.validation;
 
 public class AgencijaTouristWindow extends JFrame {
 
@@ -122,7 +123,7 @@ public class AgencijaTouristWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
             	Long turistIdLong = Long.valueOf(userId);
-                ReservationsFrame reservationsFrame = new ReservationsFrame(turistIdLong);
+                ReservationsFrame reservationsFrame = new ReservationsFrame(turistIdLong,true);//used for making table of matching reservations
                 reservationsFrame.setVisible(true);
             }
         });
@@ -186,28 +187,15 @@ public class AgencijaTouristWindow extends JFrame {
             labelGbc.gridy = 2;
             labelPanel.add(roomsLabel, labelGbc);
 
-            int ordinal = Integer.parseInt(rowData[7]);
-            TypeOfArrangement[] valuesArrangement = TypeOfArrangement.values();
-            if (ordinal >= 0 && ordinal < valuesArrangement.length) {
-                TypeOfArrangement enumValue = valuesArrangement[ordinal];
-                JLabel typeOfArrangementJLabel = new JLabel("Arrangement type: " + enumValue);
+            
+                JLabel typeOfArrangementJLabel = new JLabel("Arrangement type: " + rowData[2]);
                 labelGbc.gridy = 3;
                 labelPanel.add(typeOfArrangementJLabel, labelGbc);
-            } else {
-                System.out.println("Invalid ordinal position.");
-            }
-
-            int ordinal1 = Integer.parseInt(rowData[7]);
-            TypeOfAccommodation[] valuesAccommodation = TypeOfAccommodation.values();
-            if (ordinal1 >= 0 && ordinal1 < valuesAccommodation.length) {
-                TypeOfAccommodation enumValue1 = valuesAccommodation[ordinal1];
-                JLabel typeOfAccommodationJLabel = new JLabel("Accommodation type: " + enumValue1);
+            
+                JLabel typeOfAccommodationJLabel = new JLabel("Accommodation type: " + rowData[7]);
                 labelGbc.gridy = 4;
                 labelPanel.add(typeOfAccommodationJLabel, labelGbc);
-            } else {
-                System.out.println("Invalid ordinal position.");
-            }
-
+            
             JLabel priceLabel = new JLabel("Price: " + rowData[8] + "$");
             labelGbc.gridy = 5;
             labelPanel.add(priceLabel, labelGbc);
@@ -241,17 +229,20 @@ public class AgencijaTouristWindow extends JFrame {
             card.add(labelPanel, BorderLayout.CENTER);
 
             JButton button = new JButton("Make Reservation");
-//            final int cardIndex = i; // Number of clicked card or arrangement
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 	if(Integer.parseInt(rowData[6]) != 0 || Integer.parseInt(rowData[6]) > 0) {
-                		int numberOfPassengers = Integer.parseInt(numberOfPassengersField.getText());
-                		int tripDuration = Integer.parseInt(tripDurationField.getText());
-                		Reservation reservation = new Reservation(userId, rowData[0], rowData[1], numberOfPassengers, tripDuration);
-                		String reservationData = reservation.getData();
-                		writeLineToFile("src\\data\\reservations.csv", reservationData);
-//                		System.out.println(reservationData);
+                		if(validation.isNumeric(numberOfPassengersField.getText()) && validation.isNumeric(tripDurationField.getText())) {
+                			//number == (int) number
+                			int numberOfPassengers = Integer.parseInt(numberOfPassengersField.getText());
+                			int tripDuration = Integer.parseInt(tripDurationField.getText());
+                			Reservation reservation = new Reservation(userId, rowData[0], rowData[1], numberOfPassengers, tripDuration);
+                			String reservationData = reservation.getData();
+                			writeLineToFile("src\\data\\reservations.csv", reservationData);
+                			numberOfPassengersField.setText("");
+                			tripDurationField.setText("");
+                		}
                 	}
                 }
             });
