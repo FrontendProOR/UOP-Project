@@ -1,10 +1,14 @@
 package mainStructure;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 import main.AgencijaAdministratorWindow;
+import main.TotalPrice;
 
 
 public class Reservation {
@@ -40,17 +44,55 @@ public class Reservation {
 		this.status = Status.Created;
 		this.arrangmentId = arrangmentId;
 		this.sellerId = sellerId;
-		this.setTuristId(turistId);///////////////////////////
+		this.setTuristId(turistId);
+		this.totalPrice = calculateTotalPrice();
 		AgencijaAdministratorWindow.decrementNumberOfRooms(arrangmentId);
 	}
 
 	public String getData() {
 		return this.getId() + "|" + this.getArrangmentId() + "|" +  this.getSellerId() + "|" + this.getStatus() + "|"
-				+ this.getTripDuration() + "|" + this.getNumPassangers()  + "|" + this.getDateAndTime()+"|"+this.turistId;
+				+ this.getTripDuration() + "|" + this.getNumPassangers()  + "|" + this.getDateAndTime()+"|"+this.turistId+"|"+this.totalPrice;
 	}
 
 	public int getNumPassangers() {
 		return numPassangers;
+	}
+	
+	public double calculateTotalPrice() {
+		double totalPriceDouble = 0;
+        String csvFile1 = "src/data/arrangments.csv";
+        String line1;
+        String csvSplitBy = "\\|";
+        String unitPrice = "0";
+        String fairDiscount = "0";
+		try (BufferedReader br1 = new BufferedReader(new FileReader(csvFile1))) {
+            while ((line1 = br1.readLine()) != null) {
+                String[] values1 = line1.split(csvSplitBy);
+                String rowId1 = values1[0];
+                if (rowId1.equals(this.arrangmentId)) {
+                    unitPrice = values1[8];
+                    fairDiscount = values1[9];
+                    
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (unitPrice == null || fairDiscount == null) {
+            throw new IllegalArgumentException("Invalid data for calculation");
+        }
+        double tripDurationDouble = Double.valueOf(this.tripDuration);
+        double numberOfPassengersDouble = Double.valueOf(this.numPassangers);
+        double unitPriceDouble = Double.valueOf(unitPrice);
+        double fairDiscountDouble = Double.valueOf(fairDiscount);
+        if (tripDurationDouble <= 0 || numberOfPassengersDouble <= 0 || unitPriceDouble <= 0) {
+            throw new IllegalArgumentException("Invalid data for calculation");
+        }
+
+        totalPriceDouble = (tripDurationDouble * numberOfPassengersDouble * unitPriceDouble) * (1 - (fairDiscountDouble / 100));
+		return totalPriceDouble;
 	}
 
 	public void setNumPassangers(int numPassangers) {
@@ -125,8 +167,10 @@ public class Reservation {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(double totalPrice) {
-		this.totalPrice = totalPrice;
+	public void setTotalPrice(String arrangmentId,long reservationId) {
+		main.TotalPrice totalPriceTemp = new TotalPrice();
+		double totalPriceDouble = totalPriceTemp.getTotalPrice(arrangmentId, reservationId);
+		this.totalPrice = totalPriceDouble;
 	}
 
 	public String getTuristId() {

@@ -15,14 +15,21 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Vector;
 
 import main.AgencijaAdministratorWindow;
 import mainStructure.Reservation;
 import mainStructure.Status;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -299,7 +306,7 @@ public class AgencijaAgentWindow extends JFrame {
         
         String filePath = "src/data/reservations.csv";
         List<String> emptyList = new ArrayList<>();
-        String[] columnNamesReservations = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID"};
+        String[] columnNamesReservations = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID","Total Price"};
         DefaultTableModel tableModelReservation = new DefaultTableModel(columnNamesReservations, 0);
         JTable reservationTable = new JTable(tableModelReservation);
         main.AgencijaAdministratorWindow.loadReservationData(filePath,reservationTable,emptyList,false,agentIdLong);//Here loading the reservations for agent only
@@ -387,6 +394,18 @@ public class AgencijaAgentWindow extends JFrame {
         String[] labels = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time", "Tourist ID"};
 
         for (String label : labels) {
+        	if (label.equals("Status")) {
+                continue; // Skip adding the "Status" label because it is completed automaticly
+            }
+        	if(label.equals("Date and Time")) {
+        		JLabel jLabel = new JLabel(label);
+        		UtilDateModel dateModel = new UtilDateModel();
+        		JDatePanelImpl datePanel = new JDatePanelImpl(dateModel);
+        		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+                panel.add(jLabel);
+                panel.add(datePicker);
+                continue;
+        	}
             JLabel jLabel = new JLabel(label);
             JTextField jTextField = new JTextField(20);
             panel.add(jLabel);
@@ -400,21 +419,51 @@ public class AgencijaAgentWindow extends JFrame {
                 formData.clear();
                 Component[] components = panel.getComponents();
                 for (Component component : components) {
+                	if(component instanceof JDatePickerImpl) {
+                		JDatePickerImpl datePickerImpl = (JDatePickerImpl) component;
+                		SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
+        				GregorianCalendar cal = new GregorianCalendar();
+        				String datum = format.format(datePickerImpl.getModel().getValue());
+        					try {
+								cal.setTime(format.parse(datum));
+							} catch (ParseException e1) {
+								e1.printStackTrace();
+							}
+        					String formattedDate = format.format(cal.getTime());
+                		
+                		formData.add(formattedDate);
+                	}
                     if (component instanceof JTextField) {
                         JTextField textField = (JTextField) component;
                         formData.add(textField.getText());
                     }
                 }
-                Reservation reservation = new Reservation(formData.get(7),formData.get(1),formData.get(2),Integer.parseInt(formData.get(5)), Integer.parseInt(formData.get(4)));
+                Reservation reservation = new Reservation(formData.get(6),formData.get(1),formData.get(2),Integer.parseInt(formData.get(4)), Integer.parseInt(formData.get(3)));
+                reservation.setStatus(Status.Completed);
+                reservation.setDateAndTime(formData.get(5));
                 String lineString = reservation.getData();
+                String totalPriceString = String.valueOf(reservation.getTotalPrice());
                 writeReservation(lineString);
-                String[] newRowStrings = new String[formData.size()]; 
+//                reservation.setTotalPrice(formData.get(0),Long.valueOf(formData.get(1)));
+//                String lineWithTotalPriceString = reservation.getData();
+//                modifyReservationLine(String.valueOf(reservation.getId()),lineWithTotalPriceString, "src\\data\\reservations.csv");
+                String[] newRowStrings = new String[formData.size()+2]; 
 
-                for (int i = 0; i < formData.size(); i++) {
-                    newRowStrings[i] = formData.get(i); 
+                for (int i = 0; i < 3; i++) {
+                    newRowStrings[i] = formData.get(i);
                 }
+                
+                newRowStrings[3] = "Completed"; // Set "Completed" at the fourth index
+                
+                for (int i = 3; i < formData.size(); i++) {
+                    newRowStrings[i + 1] = formData.get(i);
+                }
+                
+                newRowStrings[newRowStrings.length - 1] = totalPriceString;
+                
                 tableModel.addRow(newRowStrings);
 //                table.setModel(tableModel);
+                frame.dispose();
             }
         });
 
@@ -435,6 +484,8 @@ public class AgencijaAgentWindow extends JFrame {
             System.out.println("An error occurred while writing to the CSV file: " + e.getMessage());
         }
     }
+   
+    
     public void changeReservationForm(int selectedRow, JTable table, DefaultTableModel tableModel) {
         JFrame frame = new JFrame("Form Frame");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -444,53 +495,82 @@ public class AgencijaAgentWindow extends JFrame {
         List<JTextField> textFields = new ArrayList<>();
         String[] labels = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time", "Tourist ID"};
 
-        
         Object[] rowData = new Object[labels.length];
         for (int i = 0; i < labels.length; i++) {
             rowData[i] = table.getValueAt(selectedRow, i);
         }
 
         for (int i = 0; i < labels.length; i++) {
+            if (labels[i].equals("Status")) {
+                continue; // Skip adding the "Status" label because it is completed automatically
+            }
+            if (labels[i].equals("Date and Time")) {
+                JLabel jLabel = new JLabel(labels[i]);
+                UtilDateModel dateModel = new UtilDateModel();
+                JDatePanelImpl datePanel = new JDatePanelImpl(dateModel);
+                JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+                panel.add(jLabel);
+                panel.add(datePicker);
+                textFields.add(null); // Placeholder for date picker
+                continue;
+            }
             JLabel jLabel = new JLabel(labels[i]);
-            JTextField jTextField = new JTextField(rowData[i].toString(), 20); 
+            JTextField jTextField = new JTextField(rowData[i].toString(), 20);
             panel.add(jLabel);
             panel.add(jTextField);
             textFields.add(jTextField);
         }
-        
+
         JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String[] formData = new String[textFields.size()];
                 for (int i = 0; i < textFields.size(); i++) {
-                    formData[i] = textFields.get(i).getText();
+                    if (textFields.get(i) == null) {
+                        // Handle date picker value
+                        JDatePickerImpl datePicker = (JDatePickerImpl) panel.getComponent(i * 2 + 1);
+                        SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
+                        GregorianCalendar cal = new GregorianCalendar();
+                        String datum = format.format(datePicker.getModel().getValue());
+                        try {
+                            cal.setTime(format.parse(datum));
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                        String formattedDate = format.format(cal.getTime());
+
+                        formData[i] = formattedDate;
+                    } else {
+                        // Handle text field value
+                        formData[i] = textFields.get(i).getText();
+                    }
                 }
-                
-                Reservation reservation = new Reservation(formData[7], formData[1], formData[2], Integer.parseInt(formData[5]), Integer.parseInt(formData[4]));
+
+                Reservation reservation = new Reservation(formData[6], formData[1], formData[2], Integer.parseInt(formData[4]), Integer.parseInt(formData[3]));
                 reservation.setStatus(Status.Completed);
                 String newLine = reservation.getData();
                 String reservationId = formData[0].toString();
                 
                 String[] newTableRowData = newLine.split("\\|");
                 formData[0] = newTableRowData[0];
-                formData[6] = newTableRowData[6];
+                formData[5] = newTableRowData[5];
                 modifyReservationLine(reservationId,newLine, "src\\data\\reservations.csv");
 
-                tableModel.removeRow(selectedRow);
-                tableModel.addRow(formData);
-                table.setModel(tableModel);
+                // Dispose the frame after submitting the form
                 frame.dispose();
             }
         });
-
 
         panel.add(submitButton);
         frame.getContentPane().add(panel);
         frame.pack();
         frame.setVisible(true);
     }
-    public void modifyReservationLine(String reservationId, String newLine, String filePath) {
+
+    
+    
+    public static void modifyReservationLine(String reservationId, String newLine, String filePath) {
         try {
             File file = new File(filePath);
             File tempFile = new File("temp.csv");
@@ -523,40 +603,74 @@ public class AgencijaAgentWindow extends JFrame {
             e.printStackTrace();
         }
     }
-    protected void cancelReservationFunction(long reservationId,JTable table,DefaultTableModel tableModel) {
-    	int selectedRowIndex = table.getSelectedRow();
-		String reservationIdTemp = table.getValueAt(selectedRowIndex, 0).toString();
-		
-		String csvFile = "src\\data\\reservations.csv";
-		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
-			List<String> lines = new ArrayList<>();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] values = line.split("\\|");
-				if (values[0].equals(reservationIdTemp)) {
-					if(values[3].equals(mainStructure.Status.Created.toString())) {																
-						table.setValueAt(mainStructure.Status.Failed.toString(), selectedRowIndex, 3);
-						values[3] = mainStructure.Status.Failed.toString();
-						line = String.join("|", values);						
-					}
-				}
-				lines.add(line);
-			}
-			tableModel.setValueAt(Status.Failed.toString(), selectedRowIndex, 3);
-			table.setModel(tableModel);
-			
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
-				for (String modifiedLine : lines) {
-					writer.write(modifiedLine);
-					writer.newLine();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+//    protected void cancelReservationFunction(long reservationId,JTable table,DefaultTableModel tableModel) {
+//    	int selectedRowIndex = table.getSelectedRow();
+//		String reservationIdTemp = table.getValueAt(selectedRowIndex, 0).toString();
+//		
+//		String csvFile = "src\\data\\reservations.csv";
+//		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+//			List<String> lines = new ArrayList<>();
+//			String line;
+//			while ((line = reader.readLine()) != null) {
+//				String[] values = line.split("\\|");
+//				if (values[0].equals(reservationIdTemp)) {
+//					if(values[3].equals(mainStructure.Status.Created.toString())) {																
+//						table.setValueAt(mainStructure.Status.Failed.toString(), selectedRowIndex, 3);
+//						values[3] = mainStructure.Status.Failed.toString();
+//						line = String.join("|", values);						
+//					}
+//				}
+//				lines.add(line);
+//			}
+//			tableModel.setValueAt(Status.Failed.toString(), selectedRowIndex, 3);
+//			table.setModel(tableModel);
+//			
+//			try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
+//				for (String modifiedLine : lines) {
+//					writer.write(modifiedLine);
+//					writer.newLine();
+//				}
+//			} catch (IOException ex) {
+//				ex.printStackTrace();
+//			}
+//		} catch (IOException ex) {
+//			ex.printStackTrace();
+//		}
+//    }
+ // ...
+
+    public void cancelReservationFunction(long reservationId, JTable reservationTable, DefaultTableModel tableModelReservation) {
+        String filePath = "src/data/reservations.csv";
+        List<String> reservationData = new ArrayList<>();
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] reservationValues = line.split("\\|");
+                if (Long.parseLong(reservationValues[0]) == reservationId) {
+                    reservationValues[3] = "Failed"; // Update the status to Failed
+                }
+                reservationData.add(String.join("|", reservationValues));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (String reservation : reservationData) {
+                writer.write(reservation);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        // Remove the canceled reservation from the table
+//        tableModelReservation.removeRow(reservationTable.getSelectedRow());//This is deleting and this under is modifying
+        tableModelReservation.setValueAt(Status.Failed.toString(),reservationTable.getSelectedRow(),3);
+        System.out.println("Reservation canceled and set to Failed successfully.");
     }
+
     protected void approveReservationFunction(long reservationId,JTable table,DefaultTableModel tableModel) {
     	int selectedRowIndex = table.getSelectedRow();
 		String reservationIdTemp = table.getValueAt(selectedRowIndex, 0).toString();
@@ -576,6 +690,12 @@ public class AgencijaAgentWindow extends JFrame {
 				}
 				lines.add(line);
 			}
+			
+			if (tableModel.getValueAt(selectedRowIndex, 3).toString().equals(Status.Failed.toString())) {
+	            System.out.println("Cannot update status to Completed because it is already Failed.");
+	            return;
+	        }
+			
 			tableModel.setValueAt(Status.Completed.toString(), selectedRowIndex, 3);
 			table.setModel(tableModel);
 			

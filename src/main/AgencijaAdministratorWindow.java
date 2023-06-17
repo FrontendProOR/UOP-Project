@@ -442,8 +442,7 @@ public class AgencijaAdministratorWindow extends JFrame {
 						if (imagePath != null && !imagePath.isEmpty()) {
 							String typeOfArrangmentString = (String) tableModelArrangments.getValueAt(selectedRow, 2);
 							String availableDateString = (String) tableModelArrangments.getValueAt(selectedRow, 4);
-							String numberOfOvernightStayString = (String) tableModelArrangments.getValueAt(selectedRow,
-									5);
+							String numberOfOvernightStayString = (String) tableModelArrangments.getValueAt(selectedRow,5);
 							String numberOfRooms = (String) tableModelArrangments.getValueAt(selectedRow, 6);
 							String typeOfAccomodationString = (String) tableModelArrangments.getValueAt(selectedRow, 7);
 							String unitPrice = (String) tableModelArrangments.getValueAt(selectedRow, 8);
@@ -488,7 +487,7 @@ public class AgencijaAdministratorWindow extends JFrame {
         deleteReservationButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, deleteReservationButton.getPreferredSize().height));
         leftPanelReservation.add(deleteReservationButton);
 
-        String[] columnNamesReservations = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID"};
+        String[] columnNamesReservations = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID","Total Price"};
         DefaultTableModel tableModelReservation = new DefaultTableModel(columnNamesReservations, 0);
         JTable reservationTable = new JTable(tableModelReservation);
         
