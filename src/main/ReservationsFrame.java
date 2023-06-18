@@ -3,6 +3,7 @@ package main;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -45,7 +47,10 @@ public class ReservationsFrame extends JFrame {
 		gbc.gridy = 1;
 		JButton button2 = new JButton("Cancel Reservation");
 		leftPanel.add(button2, gbc);
-
+		gbc.gridy = 2;
+		JButton button3 = new JButton("Spent up to now");
+		leftPanel.add(button3,gbc);
+		
 		JPanel rightPanel = new JPanel(new BorderLayout());
 
 
@@ -54,7 +59,7 @@ public class ReservationsFrame extends JFrame {
 		List<String> turistDataString = turista.getListOfReservations();
 //		System.out.println(turistDataString);
 
-		String[] tableHeaders = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID"};
+		String[] tableHeaders = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID","Total Price"};
         DefaultTableModel tableModel = new DefaultTableModel(tableHeaders, 0);
         JTable reservationTable = new JTable(tableModel);
         String filePath = "src/data/reservations.csv";
@@ -113,6 +118,13 @@ public class ReservationsFrame extends JFrame {
 			}
 		});
 
+		button3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			generateReportOnTotalMoneySpent(reservationTable);
+				
+			}
+		});
+		
 		JScrollPane scrollPane = new JScrollPane(reservationTable);
 		rightPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -120,5 +132,38 @@ public class ReservationsFrame extends JFrame {
 		mainPanel.add(rightPanel, BorderLayout.CENTER);
 
 		setContentPane(mainPanel);
+	}
+	private void generateReportOnTotalMoneySpent(JTable table) {
+		JFrame reportFrame = new JFrame();
+	    reportFrame.setTitle("Report");
+	    reportFrame.setSize(750, 450);
+	    reportFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	    reportFrame.setLayout(new GridLayout(14, 1, 10, 10));
+	    
+	    DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+	    
+	    int rowCount = tableModel.getRowCount();
+	    List<String> completedReservationIds = new ArrayList<>();
+	    List<String> completedTotalPricesOfReservationList = new ArrayList<>();
+	    for (int row = 0; row < rowCount; row++) {
+	        String status = (String) tableModel.getValueAt(row, 3);
+	        if (status.equals("Completed")) {
+	            String arrangementId = (String) tableModel.getValueAt(row, 0);
+	            completedReservationIds.add(arrangementId);
+	            String totalPrice =(String)tableModel.getValueAt(row, 8);
+	            completedTotalPricesOfReservationList.add(totalPrice);
+	        }
+	    }
+	    double totalPriceDouble = 0;
+	    for (String totalPrice : completedTotalPricesOfReservationList) {
+	        double price = Double.parseDouble(totalPrice);
+	        totalPriceDouble += price;
+	    }
+	    JLabel totalPriceJLabel = new JLabel("You have spent up to now on all of your reservations: "+totalPriceDouble);
+	    
+	    reportFrame.add(totalPriceJLabel);
+	    reportFrame.pack();
+	    reportFrame.setLocationRelativeTo(null);
+	    reportFrame.setVisible(true);
 	}
 }
