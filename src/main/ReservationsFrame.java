@@ -69,8 +69,7 @@ public class ReservationsFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Here is change reservation button
 				int selectedReservationRow = reservationTable.getSelectedRow();
-				long selectedReservationId = Long
-						.parseLong(tableModel.getValueAt(selectedReservationRow, 0).toString());
+				long selectedReservationId = Long.parseLong(tableModel.getValueAt(selectedReservationRow, 0).toString());
 				ChangeReservation reservationFrame = new ChangeReservation();
 				reservationFrame.createChangeReservationFrame1(selectedReservationId, reservationTable);
 

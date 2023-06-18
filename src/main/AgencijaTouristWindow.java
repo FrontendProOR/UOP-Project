@@ -15,8 +15,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
@@ -34,6 +37,9 @@ import javax.swing.table.DefaultTableModel;
 import mainStructure.Reservation;
 import mainStructure.TypeOfAccommodation;
 import mainStructure.TypeOfArrangement;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import validation.validation;
 
 public class AgencijaTouristWindow extends JFrame {
@@ -226,6 +232,16 @@ public class AgencijaTouristWindow extends JFrame {
             labelGbc.gridy = 12;
             labelPanel.add(tripDurationField, labelGbc);
 
+            //Here ad Date and Time box and 
+            labelGbc.gridy = 13;
+            JLabel dateForReservationJLabel = new JLabel("Reservation Date:");
+            UtilDateModel dateModel = new UtilDateModel();
+			JDatePanelImpl datePanel = new JDatePanelImpl(dateModel);
+			JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+            labelPanel.add(dateForReservationJLabel,labelGbc);
+            labelGbc.gridx = 1;
+            labelPanel.add(datePicker,labelGbc);
+		
             card.add(labelPanel, BorderLayout.CENTER);
 
             JButton button = new JButton("Make Reservation");
@@ -237,7 +253,17 @@ public class AgencijaTouristWindow extends JFrame {
                 			//number == (int) number
                 			int numberOfPassengers = Integer.parseInt(numberOfPassengersField.getText());
                 			int tripDuration = Integer.parseInt(tripDurationField.getText());
-                			Reservation reservation = new Reservation(userId, rowData[0], rowData[1], numberOfPassengers, tripDuration);
+                			Reservation reservation = new Reservation(userId, rowData[0], rowData[1], numberOfPassengers, tripDuration);//Here set date formated 
+                			 SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
+                			    GregorianCalendar cal = new GregorianCalendar();
+                			    String datum = format.format(datePicker.getModel().getValue());
+                			    try {
+                			        cal.setTime(format.parse(datum));
+                			    } catch (ParseException e1) {
+                			        e1.printStackTrace();
+                			    }
+                			    String formattedDate = format.format(cal.getTime());
+                			reservation.setDateAndTime(formattedDate);
                 			String reservationData = reservation.getData();
                 			writeLineToFile("src\\data\\reservations.csv", reservationData);
                 			numberOfPassengersField.setText("");
