@@ -51,7 +51,7 @@ public class ChangeReservation {
 					while ((line = reader.readLine()) != null) {
 						String[] values = line.split("\\|");
 						if (values[0].equals(reservationIdTemp)) {
-							if(values[3].equals(mainStructure.Status.Created.toString())) {								
+							if (values[3].equals(mainStructure.Status.Created.toString())) {
 								values[5] = numOfPassengers;
 								values[4] = tripDuration;
 								table.setValueAt(numOfPassengers, selectedRowIndex, 5);

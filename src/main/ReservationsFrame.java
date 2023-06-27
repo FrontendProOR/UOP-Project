@@ -13,20 +13,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import mainStructure.Turist;
 
+@SuppressWarnings("serial")
 public class ReservationsFrame extends JFrame {
 	public ReservationsFrame(long turistId,boolean isTurist) {
 		setTitle("Reservations");
@@ -57,7 +55,7 @@ public class ReservationsFrame extends JFrame {
 		Turist turista = new Turist();
 		turista.updateListOfReservations(turistId);
 		List<String> turistDataString = turista.getListOfReservations();
-//		System.out.println(turistDataString);
+
 
 		String[] tableHeaders = {"ID", "Arrangement ID", "Seller ID", "Status", "Trip Duration", "Number of Passengers", "Date and Time","Turist ID","Total Price"};
         DefaultTableModel tableModel = new DefaultTableModel(tableHeaders, 0);
@@ -70,6 +68,7 @@ public class ReservationsFrame extends JFrame {
         }
 		
 		button1.addActionListener(new ActionListener() {
+			@SuppressWarnings("static-access")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Here is change reservation button

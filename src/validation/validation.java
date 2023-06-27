@@ -1,10 +1,7 @@
 package validation;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.time.Year;
-import java.util.Arrays;
+
 
 public class validation {
 	// Validating name,surname

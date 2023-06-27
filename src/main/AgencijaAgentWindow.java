@@ -1,10 +1,8 @@
 package main;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,7 +15,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,16 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Vector;
-
-import main.AgencijaAdministratorWindow;
 import mainStructure.Reservation;
 import mainStructure.Status;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
-
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -184,7 +176,9 @@ public class AgencijaAgentWindow extends JFrame {
 		touristPanel.add(scrollableTablePanel, BorderLayout.CENTER);
 
 		tabbedPane.addTab("Tourists", touristPanel);
-		//////////////////////////////////////////////////////////////////
+
+		// From here starts arrangements panel
+
 		JPanel arrangementsPanel = new JPanel();
 		arrangementsPanel.setLayout(new BorderLayout());
 
@@ -211,8 +205,8 @@ public class AgencijaAgentWindow extends JFrame {
 
 		gbc2.gridy = 3;
 		JButton showReportButton = new JButton("Show Report");
-		arrangementsButtonPanel.add(showReportButton,gbc2);
-		
+		arrangementsButtonPanel.add(showReportButton, gbc2);
+
 		arrangementsPanel.add(arrangementsButtonPanel, BorderLayout.WEST);
 
 		String[] tableModel4 = { "ID", "SellerID", "Type Arrangement", "Image", "Available Date",
@@ -246,7 +240,6 @@ public class AgencijaAgentWindow extends JFrame {
 
 		tableArrangements.setModel(tableModelArrangements);
 
-		
 		createArrangementButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowOfSelectedArrangmentID = tableArrangements.getSelectedRow();
@@ -277,40 +270,38 @@ public class AgencijaAgentWindow extends JFrame {
 		});
 
 		showReportButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        
-		        JFrame frame = new JFrame("Date Picker Example");
-		        frame.setTitle("Date Picker Example");
-		        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		        frame.setLayout(new GridLayout(3, 2, 10, 10));
-		        
-		        JLabel fromLabel = new JLabel("From Date:");
-		        frame.add(fromLabel);
-		        
+			public void actionPerformed(ActionEvent e) {
 
-		        UtilDateModel fromDateModel = new UtilDateModel();
-		        JDatePanelImpl fromDatePanel = new JDatePanelImpl(fromDateModel);
-		        JDatePickerImpl fromDatePicker = new JDatePickerImpl(fromDatePanel);
-		        frame.add(fromDatePicker);
-		        
-		        JLabel toLabel = new JLabel("Up to Date:");
-		        frame.add(toLabel);
-		        
-		        UtilDateModel toDateModel = new UtilDateModel();
-		        JDatePanelImpl toDatePanel = new JDatePanelImpl(toDateModel);
-		        JDatePickerImpl toDatePicker = new JDatePickerImpl(toDatePanel);
-		        frame.add(toDatePicker);
+				JFrame frame = new JFrame("Date Picker Example");
+				frame.setTitle("Date Picker Example");
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.setLayout(new GridLayout(3, 2, 10, 10));
 
-		        JButton submitButton = new JButton("Submit");
-		        submitButton.addActionListener(new ActionListener() {
-		            public void actionPerformed(ActionEvent e) {
-		               
-		            	
-		            	JDatePickerImpl fromDatePickerImpl = (JDatePickerImpl) fromDatePicker;
-		            	JDatePickerImpl toDatePickerImpl = (JDatePickerImpl) toDatePicker;
+				JLabel fromLabel = new JLabel("From Date:");
+				frame.add(fromLabel);
 
-		            	SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
-		            	
+				UtilDateModel fromDateModel = new UtilDateModel();
+				JDatePanelImpl fromDatePanel = new JDatePanelImpl(fromDateModel);
+				JDatePickerImpl fromDatePicker = new JDatePickerImpl(fromDatePanel);
+				frame.add(fromDatePicker);
+
+				JLabel toLabel = new JLabel("Up to Date:");
+				frame.add(toLabel);
+
+				UtilDateModel toDateModel = new UtilDateModel();
+				JDatePanelImpl toDatePanel = new JDatePanelImpl(toDateModel);
+				JDatePickerImpl toDatePicker = new JDatePickerImpl(toDatePanel);
+				frame.add(toDatePicker);
+
+				JButton submitButton = new JButton("Submit");
+				submitButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+
+						JDatePickerImpl fromDatePickerImpl = (JDatePickerImpl) fromDatePicker;
+						JDatePickerImpl toDatePickerImpl = (JDatePickerImpl) toDatePicker;
+
+						SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
+
 						GregorianCalendar cal1 = new GregorianCalendar();
 						String datum1 = format.format(fromDatePickerImpl.getModel().getValue());
 						try {
@@ -319,7 +310,7 @@ public class AgencijaAgentWindow extends JFrame {
 							e1.printStackTrace();
 						}
 						String formattedDate1 = format.format(cal1.getTime());
-		            	
+
 						GregorianCalendar cal2 = new GregorianCalendar();
 						String datum2 = format.format(toDatePickerImpl.getModel().getValue());
 						try {
@@ -328,47 +319,46 @@ public class AgencijaAgentWindow extends JFrame {
 							e1.printStackTrace();
 						}
 						String formattedDate2 = format.format(cal2.getTime());
-						//here are all data arrays
+
 						Map<String, String> arrangementsInRange = new HashMap<>();
 
 						for (int row = 0; row < tableModelArrangements.getRowCount(); row++) {
-						    String arrangementId = (String) tableModelArrangements.getValueAt(row, 0);
-						    String dateStr = (String) tableModelArrangements.getValueAt(row, 4);
+							String arrangementId = (String) tableModelArrangements.getValueAt(row, 0);
+							String dateStr = (String) tableModelArrangements.getValueAt(row, 4);
 
-						    try {
-						        java.util.Date date = format.parse(dateStr);
-						        if (date.after(cal1.getTime()) && date.before(cal2.getTime())) {
-						            arrangementsInRange.put(arrangementId, dateStr);
-						            System.out.println("Arrangement ID: " + arrangementId + ", Date: " + dateStr + " is within the range.");
-						        }
-						    } catch (ParseException e3) {
-						        e3.printStackTrace();
-						    }
+							try {
+								java.util.Date date = format.parse(dateStr);
+								if (date.after(cal1.getTime()) && date.before(cal2.getTime())) {
+									arrangementsInRange.put(arrangementId, dateStr);
+									System.out.println("Arrangement ID: " + arrangementId + ", Date: " + dateStr
+											+ " is within the range.");
+								}
+							} catch (ParseException e3) {
+								e3.printStackTrace();
+							}
 						}
-
 						frame.dispose();
-						
-						
-						makeReportFrame(formattedDate1,formattedDate2,arrangementsInRange);
-		            	
 
-		            }
-		        });
+						makeReportFrame(formattedDate1, formattedDate2, arrangementsInRange);
 
-		        frame.add(submitButton);
-		        frame.setLocationRelativeTo(null);
-		        frame.setSize(400, 200);
-		        frame.setVisible(true);
-		    }
+					}
+				});
+
+				frame.add(submitButton);
+				frame.setLocationRelativeTo(null);
+				frame.setSize(400, 200);
+				frame.setVisible(true);
+			}
 		});
 
-		
 		JScrollPane scrollPaneArrangements = new JScrollPane(tableArrangements);
 		scrollPaneArrangements.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 		arrangementsPanel.add(scrollPaneArrangements, BorderLayout.CENTER);
 		tabbedPane.addTab("Arrangements", arrangementsPanel);
-		//////////////////////////////////////////////////////////////////////////
+
+		// From here starts reservations panel
+
 		JPanel reservationsJPanel = new JPanel();
 		reservationsJPanel.setLayout(new BorderLayout());
 
@@ -433,7 +423,8 @@ public class AgencijaAgentWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int selectedReservationRow = reservationTable.getSelectedRow();
-				long reservationId = Long.parseLong(tableModelReservation.getValueAt(selectedReservationRow, 0).toString());
+				long reservationId = Long
+						.parseLong(tableModelReservation.getValueAt(selectedReservationRow, 0).toString());
 				approveReservationFunction(reservationId, reservationTable, tableModelReservation);
 			}
 		});
@@ -448,129 +439,128 @@ public class AgencijaAgentWindow extends JFrame {
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 	}
 
-	
 	public void makeReportFrame(String fromDate, String toDate, Map<String, String> arrangementsInRange) {
-	    JFrame reportFrame = new JFrame();
-	    reportFrame.setTitle("Report");
-	    reportFrame.setSize(750, 450);
-	    reportFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	    reportFrame.setLayout(new GridLayout(14, 1, 10, 10));
+		JFrame reportFrame = new JFrame();
+		reportFrame.setTitle("Report");
+		reportFrame.setSize(750, 450);
+		reportFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		reportFrame.setLayout(new GridLayout(14, 1, 10, 10));
 
-	    JLabel fromDateLabel = new JLabel("From Date: " + fromDate);
-	    JLabel toDateLabel = new JLabel("To Date: " + toDate);
-	    reportFrame.add(fromDateLabel);
-	    reportFrame.add(toDateLabel);
+		JLabel fromDateLabel = new JLabel("From Date: " + fromDate);
+		JLabel toDateLabel = new JLabel("To Date: " + toDate);
+		reportFrame.add(fromDateLabel);
+		reportFrame.add(toDateLabel);
 
-	    JLabel arrangementsLabel = new JLabel("Arrangements within range:");
-	    reportFrame.add(arrangementsLabel);
+		JLabel arrangementsLabel = new JLabel("Arrangements within range:");
+		reportFrame.add(arrangementsLabel);
 
-	    for (Map.Entry<String, String> entry : arrangementsInRange.entrySet()) {
-	        String arrangementId = entry.getKey();
-	        String date = entry.getValue();
-	        JLabel arrangementLabel = new JLabel("Arrangement ID: " + arrangementId + ", Date: " + date);
-	        reportFrame.add(arrangementLabel);
+		for (Map.Entry<String, String> entry : arrangementsInRange.entrySet()) {
+			String arrangementId = entry.getKey();
+			String date = entry.getValue();
+			JLabel arrangementLabel = new JLabel("Arrangement ID: " + arrangementId + ", Date: " + date);
+			reportFrame.add(arrangementLabel);
 
-	        double arrangementTotalProfit = calculateTotalProfitForArrangement(arrangementId);
-	        JLabel arrangementProfitLabel = new JLabel("Total Profit for Arrangement: " + arrangementTotalProfit);
-	        reportFrame.add(arrangementProfitLabel);
-	    }
-	    
-	    
-	    List<Map.Entry<String, String>> sortedArrangements = sortArrangementsByPopularity(arrangementsInRange);
+			double arrangementTotalProfit = calculateTotalProfitForArrangement(arrangementId);
+			JLabel arrangementProfitLabel = new JLabel("Total Profit for Arrangement: " + arrangementTotalProfit);
+			reportFrame.add(arrangementProfitLabel);
+		}
 
-	    for (int i = 0; i < sortedArrangements.size(); i++) {
-	        Map.Entry<String, String> entry = sortedArrangements.get(i);
-	        String arrangementId = entry.getKey();
-	        String date = entry.getValue();
-	        JLabel arrangementLabel = new JLabel((i + 1) + ". Arrangement ID: " + arrangementId + ", Date: " + date);
-	        reportFrame.add(arrangementLabel);
+		List<Map.Entry<String, String>> sortedArrangements = sortArrangementsByPopularity(arrangementsInRange);
 
-	    }
-	    
-	    double totalProfitForRange = calculateTotalProfitForRange(arrangementsInRange.keySet());
-	    JLabel totalProfitForRangeLabel = new JLabel("Total Profit for All Arrangements in Range: " + totalProfitForRange);
-	    reportFrame.add(totalProfitForRangeLabel);
+		for (int i = 0; i < sortedArrangements.size(); i++) {
+			Map.Entry<String, String> entry = sortedArrangements.get(i);
+			String arrangementId = entry.getKey();
+			String date = entry.getValue();
+			JLabel arrangementLabel = new JLabel((i + 1) + ". Arrangement ID: " + arrangementId + ", Date: " + date);
+			reportFrame.add(arrangementLabel);
 
-	    reportFrame.pack();
-	    reportFrame.setLocationRelativeTo(null);
-	    reportFrame.setVisible(true);
+		}
+
+		double totalProfitForRange = calculateTotalProfitForRange(arrangementsInRange.keySet());
+		JLabel totalProfitForRangeLabel = new JLabel(
+				"Total Profit for All Arrangements in Range: " + totalProfitForRange);
+		reportFrame.add(totalProfitForRangeLabel);
+
+		reportFrame.pack();
+		reportFrame.setLocationRelativeTo(null);
+		reportFrame.setVisible(true);
 	}
 
 	private List<Entry<String, String>> sortArrangementsByPopularity(Map<String, String> arrangementsInRange) {
 		Map<String, Integer> arrangementCountMap = new HashMap<>();
 
-	    for (Map.Entry<String, String> entry : arrangementsInRange.entrySet()) {
-	        String arrangementId = entry.getKey();
-	        arrangementCountMap.put(arrangementId, 0);
-	    }
+		for (Map.Entry<String, String> entry : arrangementsInRange.entrySet()) {
+			String arrangementId = entry.getKey();
+			arrangementCountMap.put(arrangementId, 0);
+		}
 
-	    String csvFile = "src/data/reservations.csv";
-	    String line;
-	    String cvsSplitBy = "\\|";
+		String csvFile = "src/data/reservations.csv";
+		String line;
+		String cvsSplitBy = "\\|";
 
-	    try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-	        while ((line = br.readLine()) != null) {
-	            String[] data = line.split(cvsSplitBy);
-	            String arrangementId = data[1];
-	            if (arrangementsInRange.containsKey(arrangementId)) {
-	                arrangementCountMap.put(arrangementId, arrangementCountMap.get(arrangementId) + 1);
-	            }
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+		try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+			while ((line = br.readLine()) != null) {
+				String[] data = line.split(cvsSplitBy);
+				String arrangementId = data[1];
+				if (arrangementsInRange.containsKey(arrangementId)) {
+					arrangementCountMap.put(arrangementId, arrangementCountMap.get(arrangementId) + 1);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-	    List<Map.Entry<String, String>> sortedArrangements = new ArrayList<>(arrangementsInRange.entrySet());
-	    sortedArrangements.sort((e1, e2) -> arrangementCountMap.get(e2.getKey()).compareTo(arrangementCountMap.get(e1.getKey())));
+		List<Map.Entry<String, String>> sortedArrangements = new ArrayList<>(arrangementsInRange.entrySet());
+		sortedArrangements
+				.sort((e1, e2) -> arrangementCountMap.get(e2.getKey()).compareTo(arrangementCountMap.get(e1.getKey())));
 
-	    return sortedArrangements;
+		return sortedArrangements;
 	}
 
 	private double calculateTotalProfitForArrangement(String arrangementId) {
-	    String csvFile = "src\\data\\reservations.csv";
-	    String line;
-	    String cvsSplitBy = "\\|";
-	    double totalProfit = 0.0;
+		String csvFile = "src\\data\\reservations.csv";
+		String line;
+		String cvsSplitBy = "\\|";
+		double totalProfit = 0.0;
 
-	    try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-	        while ((line = br.readLine()) != null) {
-	            String[] data = line.split(cvsSplitBy);
-	            String currentArrangementId = data[1];
-	            double totalPrice = Double.parseDouble(data[8]);
-	            if (currentArrangementId.equals(arrangementId) && data[3].equals(Status.Completed.toString())) {
-	                totalProfit += totalPrice;
-	            }
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+		try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+			while ((line = br.readLine()) != null) {
+				String[] data = line.split(cvsSplitBy);
+				String currentArrangementId = data[1];
+				double totalPrice = Double.parseDouble(data[8]);
+				if (currentArrangementId.equals(arrangementId) && data[3].equals(Status.Completed.toString())) {
+					totalProfit += totalPrice;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-	    return totalProfit;
+		return totalProfit;
 	}
 
 	private double calculateTotalProfitForRange(Set<String> arrangementIds) {
-	    String csvFile = "src\\data\\reservations.csv";
-	    String line;
-	    String cvsSplitBy = "\\|";
-	    double totalProfit = 0.0;
+		String csvFile = "src\\data\\reservations.csv";
+		String line;
+		String cvsSplitBy = "\\|";
+		double totalProfit = 0.0;
 
-	    try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-	        while ((line = br.readLine()) != null) {
-	            String[] data = line.split(cvsSplitBy);
-	            String arrangementId = data[1];
-	            double totalPrice = Double.parseDouble(data[8]);
-	            if (arrangementIds.contains(arrangementId)&& data[3].equals(Status.Completed.toString())) {
-	                totalProfit += totalPrice;
-	            }
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+		try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+			while ((line = br.readLine()) != null) {
+				String[] data = line.split(cvsSplitBy);
+				String arrangementId = data[1];
+				double totalPrice = Double.parseDouble(data[8]);
+				if (arrangementIds.contains(arrangementId) && data[3].equals(Status.Completed.toString())) {
+					totalProfit += totalPrice;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-	    return totalProfit;
+		return totalProfit;
 	}
 
-	
 	private static void makeReservationForm(JTable table, DefaultTableModel tableModel) {
 		JFrame frame = new JFrame("Form Frame");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -717,19 +707,19 @@ public class AgencijaAgentWindow extends JFrame {
 				String[] formData = new String[textFields.size()];
 				for (int i = 0; i < textFields.size(); i++) {
 					if (panel.getComponent(i * 2 + 1) instanceof JDatePickerImpl) {
-					    JDatePickerImpl datePicker = (JDatePickerImpl) panel.getComponent(i * 2 + 1);
-					    SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
-					    GregorianCalendar cal = new GregorianCalendar();
-					    String datum = format.format(datePicker.getModel().getValue());
-					    try {
-					        cal.setTime(format.parse(datum));
-					    } catch (ParseException e1) {
-					        e1.printStackTrace();
-					    }
-					    formattedDate = format.format(cal.getTime());
-					    formData[i] = formattedDate;
-					    System.out.println(formattedDate);
-					}  else {
+						JDatePickerImpl datePicker = (JDatePickerImpl) panel.getComponent(i * 2 + 1);
+						SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
+						GregorianCalendar cal = new GregorianCalendar();
+						String datum = format.format(datePicker.getModel().getValue());
+						try {
+							cal.setTime(format.parse(datum));
+						} catch (ParseException e1) {
+							e1.printStackTrace();
+						}
+						formattedDate = format.format(cal.getTime());
+						formData[i] = formattedDate;
+						System.out.println(formattedDate);
+					} else {
 
 						formData[i] = textFields.get(i).getText();
 					}
@@ -743,19 +733,17 @@ public class AgencijaAgentWindow extends JFrame {
 				int tableSelectedRow = table.getSelectedRow();
 				Long oldIdLong = Long.valueOf(tableModel.getValueAt(tableSelectedRow, 0).toString());
 				reservation.setId(oldIdLong);
-				
+
 				String newLine = reservation.getData();
 				String reservationId = String.valueOf(reservation.getId());
 
 				String[] newTableRowData = newLine.split("\\|");
 				formData[0] = newTableRowData[0];
 				formData[5] = newTableRowData[5];
-				
-				
-				
-				modifyReservationLine(reservationId, newLine, "src\\data\\reservations.csv",newTableRowData,tableModel,tableSelectedRow);
 
-				//Add update table and it is not modifying
+				modifyReservationLine(reservationId, newLine, "src\\data\\reservations.csv", newTableRowData,
+						tableModel, tableSelectedRow);
+
 				frame.dispose();
 			}
 		});
@@ -766,46 +754,45 @@ public class AgencijaAgentWindow extends JFrame {
 		frame.setVisible(true);
 	}
 
-	public static void modifyReservationLine(String reservationId, String newLine, String filePath, String[] newTableRowData,DefaultTableModel tableModel,int selectedRow) {
-	    try {
-	        File file = new File(filePath);
-	        File tempFile = new File("temp4.csv");
-	        BufferedReader reader = new BufferedReader(new FileReader(file));
-	        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+	public static void modifyReservationLine(String reservationId, String newLine, String filePath,
+			String[] newTableRowData, DefaultTableModel tableModel, int selectedRow) {
+		try {
+			File file = new File(filePath);
+			File tempFile = new File("temp4.csv");
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 
-	        String line;
-	        while ((line = reader.readLine()) != null) {
-	            String[] lineStrings = line.split("\\|");
-	            if (lineStrings[0].equals(reservationId)) {
-	                writer.write(newLine);
-	                writer.newLine();
-	                
-	            } else {
-	                writer.write(line);
-	                writer.newLine();
-	            }
-	        }
-	        
-	        reader.close();
-	        writer.close();
-	        
-	        if (file.delete()) {
-	            if (!tempFile.renameTo(file)) {
-	                throw new IOException("Failed to rename the temporary file to the original file");
-	            }
-	        } else {
-	            throw new IOException("Failed to delete the original file");
-	        }
-	        
-	        // Update the table directly with the newTableRowData values
-	        for (int i = 0; i < newTableRowData.length; i++) {
-	            tableModel.setValueAt(newTableRowData[i], selectedRow, i);
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] lineStrings = line.split("\\|");
+				if (lineStrings[0].equals(reservationId)) {
+					writer.write(newLine);
+					writer.newLine();
+
+				} else {
+					writer.write(line);
+					writer.newLine();
+				}
+			}
+
+			reader.close();
+			writer.close();
+
+			if (file.delete()) {
+				if (!tempFile.renameTo(file)) {
+					throw new IOException("Failed to rename the temporary file to the original file");
+				}
+			} else {
+				throw new IOException("Failed to delete the original file");
+			}
+
+			for (int i = 0; i < newTableRowData.length; i++) {
+				tableModel.setValueAt(newTableRowData[i], selectedRow, i);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
 
 	public void cancelReservationFunction(long reservationId, JTable reservationTable,
 			DefaultTableModel tableModelReservation) {

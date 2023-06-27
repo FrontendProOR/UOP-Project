@@ -1,5 +1,5 @@
 package mainStructure;
-//import java.util.*;
+
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -34,7 +34,6 @@ public class Turist extends User {
 		List<String> listOfReservations = new ArrayList<>();
 		String turistIdString = Long.toString(turistId);
 		
-//		turistIdString = "123456789";
 		String csvFile = "src\\data\\reservations.csv";
         String line;
         String cvsSplitBy = "\\|";
@@ -70,13 +69,5 @@ public class Turist extends User {
 		return super.getId();
 	}
 	protected Role role = Role.Turist;
-
-//	public void setListOfReservations(List<String> listOfReservations) {
-//		this.listOfReservations = listOfReservations;
-//	}
-
-//	public void setRole(Role role) {
-//		this.role = role;
-//	}
 
 }

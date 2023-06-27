@@ -1,14 +1,7 @@
 package mainStructure;
 
-import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
 import java.util.Random;
 
-//import java.util.*;
-
-/**
- * 
- */
 public class Arrangment {
 
 	private long sellerID;
@@ -39,11 +32,13 @@ public class Arrangment {
 		this.deleted = false;
 	}
 
-	public Arrangment(long id,long sellerID,String picture, TypeOfArrangement typeOfArrangement,String availableDate, String price, String fairDiscount, boolean deleted, TypeOfAccommodation typeOfAccommodation, String numberOfRooms, String numberOfOvernightStays) {
-		if(id == 0) {
+	public Arrangment(long id, long sellerID, String picture, TypeOfArrangement typeOfArrangement, String availableDate,
+			String price, String fairDiscount, boolean deleted, TypeOfAccommodation typeOfAccommodation,
+			String numberOfRooms, String numberOfOvernightStays) {
+		if (id == 0) {
 			id = new Random().nextLong();
 		}
-		if(sellerID == 0) {
+		if (sellerID == 0) {
 			sellerID = new Random().nextLong();
 		}
 		this.id = id;
@@ -84,9 +79,11 @@ public class Arrangment {
 	}
 
 	public String getInfo() {
-		return this.id+"|"+this.sellerID+"|"+this.typeOfArrangment+"|"+this.picture+"|"+this.availableDate+"|"+this.numberOfOvernightStays+"|"+this.numberOfRooms+"|"+this.accomodation+"|"+this.unitPrice+"|"+this.fairDiscount+"|"+this.deleted;
+		return this.id + "|" + this.sellerID + "|" + this.typeOfArrangment + "|" + this.picture + "|"
+				+ this.availableDate + "|" + this.numberOfOvernightStays + "|" + this.numberOfRooms + "|"
+				+ this.accomodation + "|" + this.unitPrice + "|" + this.fairDiscount + "|" + this.deleted;
 	}
-	
+
 	public String getUnitPrice() {
 		return unitPrice;
 	}
@@ -167,7 +164,6 @@ public class Arrangment {
 		this.deleted = deleted;
 	}
 
-	
 	protected long id;
 
 	public long getSellerID() {
@@ -187,30 +183,15 @@ public class Arrangment {
 	}
 
 	protected String title;
-	
+
 	protected String description;
-	/**
-	 * 
-	 */
+
 	protected String picture;
 
-	/**
-	 * 
-	 */
-
-	/**
-	 * 
-	 */
 	protected String capacity;
 
-	/**
-	 * 
-	 */
 	protected String unitPrice;
 
-	/**
-	 * 
-	 */
 	protected String fairDiscount;
 
 }

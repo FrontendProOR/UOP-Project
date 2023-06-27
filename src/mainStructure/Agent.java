@@ -8,11 +8,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 
-//import java.util.*;
 
-/**
- * 
- */
 public class Agent extends User {
 
     private List<String> listOfArrangments;
@@ -22,15 +18,11 @@ public class Agent extends User {
 		super.setRole(Role.Agent);
 		this.listOfArrangments = this.setListOfArrangements(this.getId());
 	}
-
 	
     public Agent() {
     	
     }
 
-    
-    //to get data you need to make agent from csv data and run this
-    //napravi da je preko agentid-ja
     public String getUserData() {
         StringBuilder arrangementString = new StringBuilder();
         long agentId;
@@ -62,7 +54,6 @@ public class Agent extends User {
 
     protected List<String> setListOfArrangements(long sellerIdLong) {
     	String sellerId = Long.toString(sellerIdLong).trim();
-//    	sellerId = "8800862720627335799";
         List<String> listOfArrangements = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader("src\\data\\arrangments.csv"))) {
             String line;
@@ -89,14 +80,5 @@ public class Agent extends User {
 	}
 
 	protected Role role = Role.Agent;
-
-//  set method will be added in case of need for importing arrangments for new agent
-//	public void setListOfArrangments(List<String> listOfArrangments) {
-//		this.listOfArrangments = listOfArrangments;
-//	}
-
-//	public void setRole(Role role) {
-//		this.role = role;
-//	}
 
 }
