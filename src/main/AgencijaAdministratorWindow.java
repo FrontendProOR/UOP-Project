@@ -900,7 +900,11 @@ public class AgencijaAdministratorWindow extends JFrame {
 		editButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				Object selectedDate = datePicker.getModel().getValue();
+				if (selectedDate == null) {
+					JOptionPane.showMessageDialog(null, "Please select a valid date.", "Invalid Date", JOptionPane.ERROR_MESSAGE);
+					return; // Exit the method if date is not selected
+				}
 				StringBuilder csvData = new StringBuilder();
 
 				try {
