@@ -30,9 +30,12 @@ import mainStructure.Status;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
+import validation.validation;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -602,7 +605,14 @@ public class AgencijaAgentWindow extends JFrame {
 						JDatePickerImpl datePickerImpl = (JDatePickerImpl) component;
 						SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
 						GregorianCalendar cal = new GregorianCalendar();
+						 Object selectedDate = datePickerImpl.getModel().getValue();
+						if (selectedDate == null) {
+							JOptionPane.showMessageDialog(null, "Please select a valid date.", "Invalid Date", JOptionPane.ERROR_MESSAGE);
+							return; // Exit the method if date is not selected
+						}
 						String datum = format.format(datePickerImpl.getModel().getValue());
+						
+						
 						try {
 							cal.setTime(format.parse(datum));
 						} catch (ParseException e1) {
@@ -617,29 +627,41 @@ public class AgencijaAgentWindow extends JFrame {
 						formData.add(textField.getText());
 					}
 				}
-				Reservation reservation = new Reservation(formData.get(6), formData.get(1), formData.get(2),
-						Integer.parseInt(formData.get(4)), Integer.parseInt(formData.get(3)));
-				reservation.setStatus(Status.Completed);
-				reservation.setDateAndTime(formData.get(5));
-				String lineString = reservation.getData();
-				String totalPriceString = String.valueOf(reservation.getTotalPrice());
-				writeReservation(lineString);
-				String[] newRowStrings = new String[formData.size() + 2];
+//				Validation for create reservation 
+				if (validation.isNumeric(formData.get(0).toString()) && validation.isNumeric(formData.get(1).toString())
+						&& validation.isNumeric(formData.get(2).toString())
+						&& validation.isNumeric(formData.get(3).toString())
+						&& validation.isNumeric(formData.get(4).toString())
+						&& validation.isNumeric(formData.get(6).toString())) {
 
-				for (int i = 0; i < 3; i++) {
-					newRowStrings[i] = formData.get(i);
-				}
+					Reservation reservation = new Reservation(formData.get(6), formData.get(1), formData.get(2),
+							Integer.parseInt(formData.get(4)), Integer.parseInt(formData.get(3)));
+					reservation.setStatus(Status.Completed);
+					reservation.setDateAndTime(formData.get(5));
+					String lineString = reservation.getData();
+					String totalPriceString = String.valueOf(reservation.getTotalPrice());
+					writeReservation(lineString);
+					String[] newRowStrings = new String[formData.size() + 2];
 
-				newRowStrings[3] = "Completed";
+					for (int i = 0; i < 3; i++) {
+						newRowStrings[i] = formData.get(i);
+					}
 
-				for (int i = 3; i < formData.size(); i++) {
-					newRowStrings[i + 1] = formData.get(i);
-				}
+					newRowStrings[3] = "Completed";
 
-				newRowStrings[newRowStrings.length - 1] = totalPriceString;
+					for (int i = 3; i < formData.size(); i++) {
+						newRowStrings[i + 1] = formData.get(i);
+					}
 
-				tableModel.addRow(newRowStrings);
+					newRowStrings[newRowStrings.length - 1] = totalPriceString;
+
+					tableModel.addRow(newRowStrings);
 //              table.setModel(tableModel);
+				}else {
+					//Here dialog for wrong input
+					JOptionPane.showMessageDialog(null, "Wrong data format. Please enter correct data.", "Data Format Error", JOptionPane.ERROR_MESSAGE);
+					
+				}
 				frame.dispose();
 			}
 		});
@@ -710,6 +732,13 @@ public class AgencijaAgentWindow extends JFrame {
 						JDatePickerImpl datePicker = (JDatePickerImpl) panel.getComponent(i * 2 + 1);
 						SimpleDateFormat format = new SimpleDateFormat(util.Util.DATE_FORMAT);
 						GregorianCalendar cal = new GregorianCalendar();
+						
+						Object selectedDate = datePicker.getModel().getValue();
+						if (selectedDate == null) {
+							JOptionPane.showMessageDialog(null, "Please select a valid date.", "Invalid Date", JOptionPane.ERROR_MESSAGE);
+							return; // Exit the method if date is not selected
+						}
+						
 						String datum = format.format(datePicker.getModel().getValue());
 						try {
 							cal.setTime(format.parse(datum));
@@ -725,24 +754,36 @@ public class AgencijaAgentWindow extends JFrame {
 					}
 //					tableModel.setValueAt(formData[i], selectedRow, i);
 				}
-
-				Reservation reservation = new Reservation(formData[6], formData[1], formData[2],
-						Integer.parseInt(formData[4]), Integer.parseInt(formData[3]));
-				reservation.setStatus(Status.Completed);
-				reservation.setDateAndTime(formData[5]);
-				int tableSelectedRow = table.getSelectedRow();
-				Long oldIdLong = Long.valueOf(tableModel.getValueAt(tableSelectedRow, 0).toString());
-				reservation.setId(oldIdLong);
-
-				String newLine = reservation.getData();
-				String reservationId = String.valueOf(reservation.getId());
-
-				String[] newTableRowData = newLine.split("\\|");
-				formData[0] = newTableRowData[0];
-				formData[5] = newTableRowData[5];
-
-				modifyReservationLine(reservationId, newLine, "src\\data\\reservations.csv", newTableRowData,
-						tableModel, tableSelectedRow);
+				//Here is validation for data
+				if (validation.isNumeric(formData[0]) && validation.isNumeric(formData[1])
+						&& validation.isNumeric(formData[2])
+						&& validation.isNumeric(formData[3])
+						&& validation.isNumeric(formData[4])
+						&& validation.isNumeric(formData[6])) {
+					
+					Reservation reservation = new Reservation(formData[6], formData[1], formData[2],
+							Integer.parseInt(formData[4]), Integer.parseInt(formData[3]));
+					reservation.setStatus(Status.Completed);
+					reservation.setDateAndTime(formData[5]);
+					int tableSelectedRow = table.getSelectedRow();
+					Long oldIdLong = Long.valueOf(tableModel.getValueAt(tableSelectedRow, 0).toString());
+					reservation.setId(oldIdLong);
+					
+					String newLine = reservation.getData();
+					String reservationId = String.valueOf(reservation.getId());
+					
+					String[] newTableRowData = newLine.split("\\|");
+					formData[0] = newTableRowData[0];
+					formData[5] = newTableRowData[5];
+					
+					modifyReservationLine(reservationId, newLine, "src\\data\\reservations.csv", newTableRowData,
+							tableModel, tableSelectedRow);
+					
+				}else {
+					//Here dialog for wrong input
+					JOptionPane.showMessageDialog(null, "Wrong data format. Please enter correct data.", "Data Format Error", JOptionPane.ERROR_MESSAGE);
+					
+				}
 
 				frame.dispose();
 			}

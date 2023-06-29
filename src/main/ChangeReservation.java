@@ -1,6 +1,9 @@
 package main;
 
 import javax.swing.*;
+
+import validation.validation;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,52 +36,64 @@ public class ChangeReservation {
 
 		JButton submitButton = new JButton("Submit");
 		submitButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String numOfPassengers = passengersField.getText();
-				String tripDuration = durationField.getText();
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        String numOfPassengers = passengersField.getText();
+		        String tripDuration = durationField.getText();
 
-				int selectedRowIndex = table.getSelectedRow();
+		        int selectedRowIndex = table.getSelectedRow();
 
-				String reservationIdTemp = table.getValueAt(selectedRowIndex, 0).toString();
+		        String reservationIdTemp = table.getValueAt(selectedRowIndex, 0).toString();
+		        
 
-				String csvFile = "src\\data\\reservations.csv";
+		        if (validation.isNumeric(numOfPassengers) && numOfPassengers != null && tripDuration != null && validation.isNumeric(tripDuration)) {
+		            // Validation passed, update the table data
+		            String csvFile = "src\\data\\reservations.csv";
 
-				try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
-					List<String> lines = new ArrayList<>();
-					String line;
+		            try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+		                List<String> lines = new ArrayList<>();
+		                String line;
+		                boolean isValid = true;
+		                while ((line = reader.readLine()) != null) {
+		                    String[] values = line.split("\\|");
+		                    if (values[0].equals(reservationIdTemp)) {
+		                        if (values[3].equals(mainStructure.Status.Created.toString())) {
+		                            values[5] = numOfPassengers;
+		                            values[4] = tripDuration;
+		                            table.setValueAt(numOfPassengers, selectedRowIndex, 5);
+		                            table.setValueAt(tripDuration, selectedRowIndex, 4);
+		                            line = String.join("|", values);
+		                        } else {
+		                            isValid = false;
+		                            JOptionPane.showMessageDialog(null, "Reservation status must be 'Created'.",
+		                                    "Invalid Reservation Status", JOptionPane.ERROR_MESSAGE);
+		                        }
+		                    }
+		                    lines.add(line);
+		                }
 
-					while ((line = reader.readLine()) != null) {
-						String[] values = line.split("\\|");
-						if (values[0].equals(reservationIdTemp)) {
-							if (values[3].equals(mainStructure.Status.Created.toString())) {
-								values[5] = numOfPassengers;
-								values[4] = tripDuration;
-								table.setValueAt(numOfPassengers, selectedRowIndex, 5);
-								table.setValueAt(tripDuration, selectedRowIndex, 4);
-								line = String.join("|", values);
-							}
-						}
+		                try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
+		                    if (isValid) {
+		                        for (String modifiedLine : lines) {
+		                            writer.write(modifiedLine);
+		                            writer.newLine();
+		                        }
+		                    }
+		                } catch (IOException ex) {
+		                    ex.printStackTrace();
+		                }
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Wrong data format. Please enter correct data.",
+		                    "Data Format Error", JOptionPane.ERROR_MESSAGE);
+		        }
 
-						lines.add(line);
-
-					}
-
-					try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
-						for (String modifiedLine : lines) {
-							writer.write(modifiedLine);
-							writer.newLine();
-						}
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-
-				changeReservationFrame.dispose();
-			}
+		        changeReservationFrame.dispose();
+		    }
 		});
+
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(submitButton);
